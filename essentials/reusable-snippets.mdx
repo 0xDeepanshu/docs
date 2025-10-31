@@ -1,110 +1,202 @@
 ---
-title: "Reusable snippets"
-description: "Reusable, custom snippets to keep content in sync"
+title: "Reusable Snippets"
+description: "How to create and use reusable content snippets in documentation"
 icon: "recycle"
 ---
 
-import SnippetIntro from '/snippets/snippet-intro.mdx';
+# Reusable Snippets
 
-<SnippetIntro />
+Learn how to create and use reusable content snippets in your Gx402 SDK documentation to maintain consistency and reduce duplication.
 
-## Creating a custom snippet
+## Introduction to Reusable Snippets
 
-**Pre-condition**: You must create your snippet file in the `snippets` directory.
+Reusable snippets allow you to define content once and use it across multiple documentation pages. This is especially valuable for:
+
+- Common setup instructions that are identical across platforms
+- Standard error handling patterns
+- API configuration examples
+- Legal disclaimers and terms
+- Frequently used code patterns
+
+## Creating Snippets
+
+### Snippet Directory Structure
+
+Create a `snippets` directory in your docs root:
+
+```
+docs/
+├── snippets/
+│   ├── common/
+│   │   ├── error-handling.mdx
+│   │   ├── authentication-steps.mdx
+│   │   └── initialization.mdx
+│   ├── platforms/
+│   │   ├── unity-setup.mdx
+│   │   ├── unreal-setup.mdx
+│   │   └── webgl-setup.mdx
+│   ├── api/
+│   │   ├── rate-limiting.mdx
+│   │   └── response-structure.mdx
+│   └── legal/
+│       └── terms-of-service.mdx
+```
+
+### Basic Snippet Format
+
+A snippet is just a regular MDX file with reusable content:
+
+**snippets/common/initialization.mdx**
+```md
+## SDK Initialization
+
+All Gx402 SDK implementations require proper initialization before use:
+
+<Tabs>
+<TabItem value="javascript" label="JavaScript">
+```javascript
+import { Gx402SDK } from '@Gx402/web-sdk';
+
+const Gx402 = new Gx402SDK({
+  apiKey: 'your-api-key',
+  enableRealtimeSync: true
+});
+
+await Gx402.init();
+```
+</TabItem>
+
+<TabItem value="csharp" label="C#">
+```csharp
+using Gx402;
+
+Gx402Manager.Initialize("your-api-key");
+
+Gx402Manager.Configure(new Gx402Config {
+    EnableRealtimeSync = true
+});
+```
+</TabItem>
+
+<TabItem value="cpp" label="C++">
+```cpp
+#include "Gx402SDK.h"
+
+FGx402Config Config;
+Config.ApiKey = TEXT("your-api-key");
+Config.bEnableRealtimeSync = true;
+
+UGx402Manager::Initialize(Config);
+```
+</TabItem>
+</Tabs>
 
 <Note>
-  Any page in the `snippets` directory will be treated as a snippet and will not
-  be rendered into a standalone page. If you want to create a standalone page
-  from the snippet, import the snippet into another file and call it as a
-  component.
+Remember to only initialize the SDK once in your application lifecycle.
 </Note>
-
-### Default export
-
-1. Add content to your snippet file that you want to re-use across multiple
-   locations. Optionally, you can add variables that can be filled in via props
-   when you import the snippet.
-
-```mdx snippets/my-snippet.mdx
-Hello world! This is my content I want to reuse across pages. My keyword of the
-day is {word}.
 ```
 
-<Warning>
-  The content that you want to reuse must be inside the `snippets` directory in
-  order for the import to work.
-</Warning>
+## Using Snippets in Documentation
 
-2. Import the snippet into your destination file.
+### Import Method
+For systems that support direct imports:
 
-```mdx destination-file.mdx
----
-title: My title
-description: My Description
----
+```md
+import InitializationSnippet from '../snippets/common/initialization.mdx'
 
-import MySnippet from '/snippets/path/to/my-snippet.mdx';
+# My Documentation Page
 
-## Header
+Content before the snippet.
 
-Lorem impsum dolor sit amet.
+<InitializationSnippet />
 
-<MySnippet word="bananas" />
+Content after the snippet.
 ```
 
-### Reusable variables
+### Include Method
+For systems that support file inclusion:
 
-1. Export a variable from your snippet file:
+```md
+# My Documentation Page
 
-```mdx snippets/path/to/custom-variables.mdx
-export const myName = 'my name';
+Content before the snippet.
 
-export const myObject = { fruit: 'strawberries' };
+{% include "./snippets/common/initialization.mdx" %}
+
+Content after the snippet.
 ```
 
-2. Import the snippet from your destination file and use the variable:
+### Markdown Reference Method
+For systems that support variable-like references:
 
-```mdx destination-file.mdx
----
-title: My title
-description: My Description
----
+```md
+# My Documentation Page
 
-import { myName, myObject } from '/snippets/path/to/custom-variables.mdx';
+Content before the snippet.
 
-Hello, my name is {myName} and I like {myObject.fruit}.
+{{INITIALIZATION_CONTENT}}
+
+Content after the snippet.
 ```
 
-### Reusable components
+## Practical Snippet Examples
 
-1. Inside your snippet file, create a component that takes in props by exporting
-   your component in the form of an arrow function.
+### Common Code Patterns
 
-```mdx snippets/custom-component.mdx
-export const MyComponent = ({ title }) => (
-  <div>
-    <h1>{title}</h1>
-    <p>... snippet content ...</p>
-  </div>
+**snippets/common/error-handling.mdx**
+```md
+### Error Handling Best Practices
+
+Always implement proper error handling for Gx402 operations:
+
+```javascript
+const safeGx402Operation = async (operation, fallback = null) => {
+  try {
+    return await operation();
+  } catch (error) {
+    console.error('Gx402 operation failed:', error);
+    
+    // Log to error tracking service
+    logError(error);
+    
+    // Return fallback or rethrow based on error type
+    if (error.code === 'NETWORK_ERROR') {
+      return fallback;
+    }
+    
+    throw error;
+  }
+};
+
+// Usage
+const result = await safeGx402Operation(
+  () => Gx402.processX402Data(data),
+  getDefaultResult(data)
 );
 ```
 
 <Warning>
-  MDX does not compile inside the body of an arrow function. Stick to HTML
-  syntax when you can or use a default export if you need to use MDX.
+Never ignore errors from SDK operations as they may indicate security issues or data integrity problems.
 </Warning>
+```
 
-2. Import the snippet into your destination file and pass in the props
+### Platform-Specific Snippets
 
-```mdx destination-file.mdx
----
-title: My title
-description: My Description
----
+**snippets/platforms/unity-permissions.mdx**
+```md
+### Required Permissions
 
-import { MyComponent } from '/snippets/custom-component.mdx';
+For Unity projects, ensure the following permissions are set:
 
-Lorem ipsum dolor sit amet.
+```csharp
+// Add to your manifest or build settings
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
 
-<MyComponent title={'Custom title'} />
+In WebGL builds, configure CORS in your `index.html`:
+
+```html
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; connect-src 'self' https://api.Gx402.com;">
 ```

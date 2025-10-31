@@ -1,318 +1,409 @@
 ---
-title: 'Global Settings'
-description: 'Mintlify gives you complete control over the look and feel of your documentation using the docs.json file'
-icon: 'gear'
+title: "Global Settings"
+description: "Configure your Gx402 SDK project settings"
+icon: "gear"
 ---
 
-Every Mintlify site needs a `docs.json` file with the core configuration settings. Learn more about the [properties](#properties) below.
+# Global Settings
 
-## Properties
+Configure global settings for your Gx402 SDK project to optimize performance, security, and functionality across all platforms.
 
-<ResponseField name="name" type="string" required>
-Name of your project. Used for the global title.
+## Configuration Overview
 
-Example: `mintlify`
+The Gx402 SDK is configured through platform-specific initialization methods, but all share common configuration principles.
 
-</ResponseField>
+### Basic Configuration Structure
 
-<ResponseField name="navigation" type="Navigation[]" required>
-  An array of groups with all the pages within that group
-  <Expandable title="Navigation">
-    <ResponseField name="group" type="string">
-    The name of the group.
-
-    Example: `Settings`
-
-    </ResponseField>
-    <ResponseField name="pages" type="string[]">
-    The relative paths to the markdown files that will serve as pages.
-
-    Example: `["customization", "page"]`
-
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="logo" type="string or object">
-  Path to logo image or object with path to "light" and "dark" mode logo images
-  <Expandable title="Logo">
-    <ResponseField name="light" type="string">
-      Path to the logo in light mode
-    </ResponseField>
-    <ResponseField name="dark" type="string">
-      Path to the logo in dark mode
-    </ResponseField>
-    <ResponseField name="href" type="string" default="/">
-      Where clicking on the logo links you to
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="favicon" type="string">
-  Path to the favicon image
-</ResponseField>
-
-<ResponseField name="colors" type="Colors">
-  Hex color codes for your global theme
-  <Expandable title="Colors">
-    <ResponseField name="primary" type="string" required>
-      The primary color. Used for most often for highlighted content, section
-      headers, accents, in light mode
-    </ResponseField>
-    <ResponseField name="light" type="string">
-      The primary color for dark mode. Used for most often for highlighted
-      content, section headers, accents, in dark mode
-    </ResponseField>
-    <ResponseField name="dark" type="string">
-      The primary color for important buttons
-    </ResponseField>
-    <ResponseField name="background" type="object">
-      The color of the background in both light and dark mode
-      <Expandable title="Object">
-        <ResponseField name="light" type="string" required>
-          The hex color code of the background in light mode
-        </ResponseField>
-        <ResponseField name="dark" type="string" required>
-          The hex color code of the background in dark mode
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="topbarLinks" type="TopbarLink[]">
-  Array of `name`s and `url`s of links you want to include in the topbar
-  <Expandable title="TopbarLink">
-    <ResponseField name="name" type="string">
-    The name of the button.
-
-    Example: `Contact us`
-    </ResponseField>
-    <ResponseField name="url" type="string">
-    The url once you click on the button. Example: `https://mintlify.com/docs`
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="topbarCtaButton" type="Call to Action">
-  <Expandable title="Topbar Call to Action">
-    <ResponseField name="type" type={'"link" or "github"'} default="link">
-    Link shows a button. GitHub shows the repo information at the url provided including the number of GitHub stars.
-    </ResponseField>
-    <ResponseField name="url" type="string">
-    If `link`: What the button links to.
-    
-    If `github`: Link to the repository to load GitHub information from.
-    </ResponseField>
-    <ResponseField name="name" type="string">
-    Text inside the button. Only required if `type` is a `link`.
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="versions" type="string[]">
-  Array of version names. Only use this if you want to show different versions
-  of docs with a dropdown in the navigation bar.
-</ResponseField>
-
-<ResponseField name="anchors" type="Anchor[]">
-  An array of the anchors, includes the `icon`, `color`, and `url`.
-  <Expandable title="Anchor">
-    <ResponseField name="icon" type="string">
-    The [Font Awesome](https://fontawesome.com/search?q=heart) icon used to feature the anchor.
-
-    Example: `comments`
-    </ResponseField>
-    <ResponseField name="name" type="string">
-    The name of the anchor label.
-
-    Example: `Community`
-    </ResponseField>
-    <ResponseField name="url" type="string">
-      The start of the URL that marks what pages go in the anchor. Generally, this is the name of the folder you put your pages in.
-    </ResponseField>
-    <ResponseField name="color" type="string">
-      The hex color of the anchor icon background. Can also be a gradient if you pass an object with the properties `from` and `to` that are each a hex color.
-    </ResponseField>
-    <ResponseField name="version" type="string">
-      Used if you want to hide an anchor until the correct docs version is selected.
-    </ResponseField>
-    <ResponseField name="isDefaultHidden" type="boolean" default="false">
-      Pass `true` if you want to hide the anchor until you directly link someone to docs inside it.
-    </ResponseField>
-    <ResponseField name="iconType" default="duotone" type="string">
-      One of: "brands", "duotone", "light", "sharp-solid", "solid", or "thin"
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="topAnchor" type="Object">
-  Override the default configurations for the top-most anchor.
-  <Expandable title="Object">
-    <ResponseField name="name" default="Documentation" type="string">
-      The name of the top-most anchor
-    </ResponseField>
-    <ResponseField name="icon" default="book-open" type="string">
-      Font Awesome icon.
-    </ResponseField>
-    <ResponseField name="iconType" default="duotone" type="string">
-      One of: "brands", "duotone", "light", "sharp-solid", "solid", or "thin"
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="tabs" type="Tabs[]">
-  An array of navigational tabs.
-  <Expandable title="Tabs">
-    <ResponseField name="name" type="string">
-      The name of the tab label.
-    </ResponseField>
-    <ResponseField name="url" type="string">
-      The start of the URL that marks what pages go in the tab. Generally, this
-      is the name of the folder you put your pages in.
-    </ResponseField>
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="api" type="API">
-  Configuration for API settings. Learn more about API pages at [API Components](/api-playground/demo).
-  <Expandable title="API">
-    <ResponseField name="baseUrl" type="string">
-      The base url for all API endpoints. If `baseUrl` is an array, it will enable for multiple base url
-      options that the user can toggle.
-    </ResponseField>
-
-    <ResponseField name="auth" type="Auth">
-      <Expandable title="Auth">
-        <ResponseField name="method" type='"bearer" | "basic" | "key"'>
-          The authentication strategy used for all API endpoints.
-        </ResponseField>
-        <ResponseField name="name" type="string">
-        The name of the authentication parameter used in the API playground.
-
-        If method is `basic`, the format should be `[usernameName]:[passwordName]`
-        </ResponseField>
-        <ResponseField name="inputPrefix" type="string">
-        The default value that's designed to be a prefix for the authentication input field.
-
-        E.g. If an `inputPrefix` of `AuthKey` would inherit the default input result of the authentication field as `AuthKey`.
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-
-    <ResponseField name="playground" type="Playground">
-      Configurations for the API playground
-
-      <Expandable title="Playground">
-        <ResponseField name="mode" default="show" type='"show" | "simple" | "hide"'>
-          Whether the playground is showing, hidden, or only displaying the endpoint with no added user interactivity `simple`
-
-          Learn more at the [playground guides](/api-playground/demo)
-        </ResponseField>
-      </Expandable>
-    </ResponseField>
-
-    <ResponseField name="maintainOrder" type="boolean">
-      Enabling this flag ensures that key ordering in OpenAPI pages matches the key ordering defined in the OpenAPI file.
-
-      <Warning>This behavior will soon be enabled by default, at which point this field will be deprecated.</Warning>
-    </ResponseField>
-
-  </Expandable>
-</ResponseField>
-
-<ResponseField name="openapi" type="string | string[]">
-  A string or an array of strings of URL(s) or relative path(s) pointing to your
-  OpenAPI file.
+#### WebGL/JavaScript
+```javascript
+const config = {
+  // Required settings
+  apiKey: 'your-api-key',
   
-  Examples:
-  <CodeGroup>
-    ```json Absolute
-    "openapi": "https://example.com/openapi.json"
-    ```
-    ```json Relative
-    "openapi": "/openapi.json"
-    ```
-    ```json Multiple
-    "openapi": ["https://example.com/openapi1.json", "/openapi2.json", "/openapi3.json"]
-    ```
-  </CodeGroup>
-
-</ResponseField>
-
-<ResponseField name="footerSocials" type="FooterSocials">
-  An object of social media accounts where the key:property pair represents the social media platform and the account url.
+  // Environment settings
+  environment: 'production', // 'development' or 'production'
   
-  Example: 
-  ```json
-  {
-    "x": "https://x.com/mintlify",
-    "website": "https://mintlify.com"
+  // Feature flags
+  enableRealtimeSync: true,
+  debug: false,
+  enableEncryption: true,
+  
+  // Performance settings
+  syncInterval: 1000, // milliseconds
+  maxRetries: 3,
+  
+  // Security settings
+  enableCertificatePinning: true
+};
+
+const Gx402 = new Gx402SDK(config);
+await Gx402.init();
+```
+
+#### Unity (C#)
+```csharp
+var config = new Gx402Config {
+    ApiKey = "your-api-key",
+    Environment = Gx402Environment.Production,
+    EnableRealtimeSync = true,
+    LogLevel = Gx402LogLevel.Info,
+    SyncInterval = 1000
+};
+
+Gx402Manager.Initialize(config);
+```
+
+#### Unreal Engine (C++)
+```cpp
+FGx402Config Config;
+Config.ApiKey = TEXT("your-api-key");
+Config.Environment = EGx402Environment::Production;
+Config.bEnableRealtimeSync = true;
+Config.SyncInterval = 1000;
+
+UGx402Manager::Initialize(Config);
+```
+
+## Environment Configuration
+
+### Development vs Production
+
+#### Environment-Specific Settings
+```javascript
+const getEnvironmentConfig = (env) => {
+  const configs = {
+    development: {
+      apiKey: process.env.Gx402_DEV_KEY,
+      environment: 'development',
+      debug: true,
+      enableRealtimeSync: false, // disable during development
+      logLevel: 'verbose',
+      apiEndpoint: 'https://dev-api.Gx402.com/v1'
+    },
+    staging: {
+      apiKey: process.env.Gx402_STAGING_KEY,
+      environment: 'development', // staging uses dev environment
+      debug: true,
+      enableRealtimeSync: true,
+      logLevel: 'info'
+    },
+    production: {
+      apiKey: process.env.Gx402_PROD_KEY,
+      environment: 'production',
+      debug: false,
+      enableRealtimeSync: true,
+      logLevel: 'warn'
+    }
+  };
+  
+  return configs[env] || configs.development;
+};
+```
+
+## Sync Configuration
+
+### Sync Strategies
+
+#### Optimistic vs Pessimistic Sync
+```javascript
+// Optimistic sync (default): Apply locally immediately, sync in background
+Gx402.configure({
+  syncStrategy: 'optimistic',
+  enableImmediateUiUpdate: true
+});
+
+// Pessimistic sync: Wait for server confirmation
+await Gx402.sync('data', payload, { 
+  strategy: 'pessimistic',
+  waitForConfirmation: true 
+});
+```
+
+### Sync Performance Settings
+```javascript
+Gx402.configure({
+  // Sync frequency
+  syncInterval: 1000, // 1 second (default)
+  
+  // Batch sync settings
+  maxBatchSize: 50,
+  batchTimeout: 1000,
+  
+  // Retry settings
+  maxRetries: 3,
+  retryDelay: 1000, // initial delay in ms
+  backoffMultiplier: 2, // exponential backoff
+  
+  // Data compression
+  enableCompression: true,
+  compressionThreshold: 1000 // bytes
+});
+```
+
+## Security Configuration
+
+### Encryption Settings
+```javascript
+Gx402.configure({
+  encryption: {
+    enabled: true,
+    algorithm: 'AES-256-GCM',
+    keyRotationInterval: 86400000, // 24 hours
+    fieldsToEncrypt: ['user.email', 'payment.info']
+  },
+  
+  // Certificate pinning (mobile)
+  certificatePinning: {
+    enabled: true,
+    certificates: [
+      'sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+      // Add your certificates here
+    ]
   }
-  ```
-  <Expandable title="FooterSocials">
-    <ResponseField name="[key]" type="string">
-    One of the following values `website`, `facebook`, `x`, `discord`, `slack`, `github`, `linkedin`, `instagram`, `hacker-news`
-    
-    Example: `x`
-    </ResponseField>
-    <ResponseField name="property" type="string">
-    The URL to the social platform.
-    
-    Example: `https://x.com/mintlify`
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+});
+```
 
-<ResponseField name="feedback" type="Feedback">
-  Configurations to enable feedback buttons
+### Authentication Configuration
+```javascript
+Gx402.configure({
+  authentication: {
+    tokenRefresh: {
+      enabled: true,
+      refreshThreshold: 300000, // 5 minutes before expiry
+      autoRefresh: true
+    },
+    sessionTimeout: 86400000, // 24 hours
+    requireAuthForSync: true
+  }
+});
+```
 
-  <Expandable title="Feedback">
-    <ResponseField name="suggestEdit" type="boolean" default="false">
-    Enables a button to allow users to suggest edits via pull requests
-    </ResponseField>
-    <ResponseField name="raiseIssue" type="boolean" default="false">
-    Enables a button to allow users to raise an issue about the documentation
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+## Performance Configuration
 
-<ResponseField name="modeToggle" type="ModeToggle">
-  Customize the dark mode toggle.
-  <Expandable title="ModeToggle">
-    <ResponseField name="default" type={'"light" or "dark"'}>
-      Set if you always want to show light or dark mode for new users. When not
-      set, we default to the same mode as the user's operating system.
-    </ResponseField>
-    <ResponseField name="isHidden" type="boolean" default="false">
-      Set to true to hide the dark/light mode toggle. You can combine `isHidden` with `default` to force your docs to only use light or dark mode. For example:
-      
-      <CodeGroup>
-      ```json Only Dark Mode
-      "modeToggle": {
-        "default": "dark",
-        "isHidden": true
-      }
-      ```
+### Memory Management
+```javascript
+Gx402.configure({
+  memory: {
+    maxCacheSize: 50 * 1024 * 1024, // 50 MB
+    cacheExpiry: 300000, // 5 minutes
+    enableGarbageCollection: true
+  },
+  
+  // Performance thresholds
+  performance: {
+    maxSyncQueueSize: 1000,
+    maxConcurrentOperations: 10,
+    syncTimeout: 10000, // 10 seconds
+    networkTimeout: 5000 // 5 seconds
+  }
+});
+```
 
-      ```json Only Light Mode
-      "modeToggle": {
-        "default": "light",
-        "isHidden": true
-      }
-      ```
-      </CodeGroup>
+### Network Configuration
+```javascript
+Gx402.configure({
+  network: {
+    endpoints: {
+      api: 'https://api.Gx402.com/v1',
+      sync: 'wss://sync.Gx402.com',
+      cdn: 'https://cdn.Gx402.com'
+    },
+    timeout: 5000,
+    retryOnFailure: true,
+    maxRetries: 3,
+    backoffMultiplier: 2
+  },
+  
+  // Bandwidth optimization
+  bandwidth: {
+    enableCompression: true,
+    compressionThreshold: 1024, // 1 KB
+    maxUploadRate: 100, // KB/s (0 = unlimited)
+    maxDownloadRate: 100 // KB/s (0 = unlimited)
+  }
+});
+```
 
-    </ResponseField>
+## Platform-Specific Configuration
 
-  </Expandable>
-</ResponseField>
+### Mobile-Specific Settings
+```javascript
+// iOS/Android specific configuration
+Gx402.configure({
+  mobile: {
+    backgroundSync: true,
+    batteryConscious: true,
+    networkAwareSync: true,
+    offlineStorage: {
+      maxSize: 100 * 1024 * 1024, // 100 MB
+      encryption: true,
+      autoCleanup: true
+    }
+  }
+});
+```
 
-<ResponseField name="backgroundImage" type="string">
-  A background image to be displayed behind every page. See example with
-  [Infisical](https://infisical.com/docs) and [FRPC](https://frpc.io).
-</ResponseField>
+### Web-Specific Settings
+```javascript
+// Browser-specific configuration
+Gx402.configure({
+  web: {
+    serviceWorker: {
+      enabled: true,
+      scope: '/Gx402-sw/',
+      updateInterval: 3600000 // 1 hour
+    },
+    storage: {
+      engine: 'indexeddb', // or 'localstorage'
+      maxSize: 50 * 1024 * 1024 // 50 MB
+    },
+    cors: {
+      allowedDomains: ['*.yourgame.com'],
+      credentials: 'include'
+    }
+  }
+});
+```
+
+## Advanced Configuration
+
+### Custom Event Handling
+```javascript
+// Configure custom event handling
+Gx402.configure({
+  events: {
+    debounceInterval: 100, // ms
+    maxQueueSize: 1000,
+    deliveryStrategy: 'at-least-once' // 'at-most-once', 'exactly-once'
+  }
+});
+
+// Register custom event handlers
+Gx402.on('custom-event', (data) => {
+  // Handle custom events
+});
+```
+
+### Analytics and Monitoring
+```javascript
+Gx402.configure({
+  analytics: {
+    enabled: true,
+    metrics: {
+      performance: true,
+      usage: true,
+      errors: true
+    },
+    privacy: {
+      includeUserIds: false,
+      includeIpAddresses: false
+    },
+    endpoint: 'https://analytics.Gx402.com/collect'
+  }
+});
+```
+
+## Runtime Configuration
+
+### Dynamic Configuration Updates
+```javascript
+// Update configuration at runtime
+await Gx402.configure({
+  syncInterval: 500, // Update sync frequency
+  debug: true // Enable debug mode
+});
+
+// Get current configuration
+const currentConfig = Gx402.getConfig();
+console.log('Current config:', currentConfig);
+```
+
+### Conditional Configuration
+```javascript
+const getDynamicConfig = () => {
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+  
+  const isLowEndDevice = navigator.hardwareConcurrency < 4;
+  
+  return {
+    syncInterval: isLowEndDevice ? 2000 : 1000,
+    enableCompression: true,
+    maxConcurrentOperations: isLowEndDevice ? 5 : 10
+  };
+};
+
+await Gx402.configure(getDynamicConfig());
+```
+
+## Configuration Validation
+
+### Validate Configuration
+```javascript
+// Validate configuration before applying
+const validateConfig = (config) => {
+  const errors = [];
+  
+  if (!config.apiKey) {
+    errors.push('API key is required');
+  }
+  
+  if (config.syncInterval < 100) {
+    errors.push('Sync interval must be at least 100ms');
+  }
+  
+  if (!['development', 'production'].includes(config.environment)) {
+    errors.push('Environment must be development or production');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+};
+
+const validation = validateConfig(config);
+if (!validation.valid) {
+  console.error('Configuration validation failed:', validation.errors);
+}
+```
+
+## Configuration Management
+
+### Environment-Based Configuration Management
+```javascript
+class ConfigManager {
+  constructor() {
+    this.config = this.loadConfig();
+  }
+  
+  loadConfig() {
+    // Load from environment variables, local storage, or defaults
+    return {
+      apiKey: process.env.Gx402_API_KEY || this.getStoredApiKey(),
+      environment: process.env.NODE_ENV || 'development',
+      enableRealtimeSync: this.getStoredSetting('syncEnabled', true),
+      debug: process.env.NODE_ENV !== 'production'
+    };
+  }
+  
+  async applyToGx402(Gx402) {
+    await Gx402.configure(this.config);
+  }
+  
+  getStoredApiKey() {
+    return localStorage.getItem('Gx402_api_key');
+  }
+  
+  getStoredSetting(key, defaultValue) {
+    const stored = localStorage.getItem(`Gx402_${key}`);
+    return stored !== null ? JSON.parse(stored) : defaultValue;
+  }
+}
+
+const configManager = new ConfigManager();
+await configManager.applyToGx402(Gx402);
+```
+
+Proper configuration is key to getting the most out of the Gx402 SDK. Start with the default settings and adjust based on your specific game requirements and performance needs.

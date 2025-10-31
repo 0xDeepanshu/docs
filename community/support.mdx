@@ -1,0 +1,220 @@
+---
+title: "Community Support"
+description: "Get help and support for Gx402 SDK"
+icon: "life-ring"
+---
+
+# Community Support
+
+Need help with the Gx402 SDK? We have multiple channels to support you, from community forums to direct assistance from our team.
+
+## Getting Help
+
+### 1. Documentation First
+Before asking for help, check our comprehensive documentation:
+
+- [Quick Start Guide](/quickstart) - Get up and running quickly
+- [Platform Guides](/platforms) - Platform-specific implementation details
+- [API Reference](/api-reference) - Complete method documentation
+- [Tutorials](/tutorials) - Step-by-step guides for common tasks
+
+### 2. Search Existing Solutions
+
+- Browse our [FAQ](/faq) for common questions
+- Check GitHub issues for your platform's SDK
+- Review the [Community Showcase](/community/showcase) for similar implementations
+
+## Support Channels
+
+### Discord Community (Primary Support)
+
+Join our Discord for real-time support from community members and core team:
+
+[**Join Gx402 Discord**](https://discord.gg/Gx402)
+
+#### Support Channels:
+- **#help-and-support**: Technical questions and troubleshooting
+- **#showcase**: Share your projects and get feedback
+- **#announcements**: SDK updates and news
+- **#general**: Community discussions
+
+### GitHub Issues
+
+Report bugs and request features on the appropriate repository:
+
+- [Unity SDK Issues](https://github.com/Gx402/unity-sdk/issues)
+- [Unreal Engine SDK Issues](https://github.com/Gx402/unreal-sdk/issues)  
+- [Web SDK Issues](https://github.com/Gx402/web-sdk/issues)
+- [Mobile SDK Issues](https://github.com/Gx402/mobile-sdk/issues)
+- [Documentation Issues](https://github.com/Gx402/docs/issues)
+
+## Common Issues and Solutions
+
+### SDK Initialization Problems
+
+**Problem**: SDK fails to initialize
+**Solutions**:
+1. Verify your API key is correct and active
+2. Check your network connectivity
+3. Ensure proper permissions are set (mobile platforms)
+4. Review platform-specific setup requirements
+
+### Authentication Issues
+
+**Problem**: Authentication fails
+**Solutions**:
+```javascript
+// Check common authentication patterns
+Gx402.authenticate('user-id', 'valid-token')
+  .catch(error => {
+    console.error('Auth failed:', error.code, error.message);
+    // Handle specific error codes
+    if (error.code === 'INVALID_TOKEN') {
+      // Refresh token logic
+    }
+  });
+```
+
+### Sync Problems
+
+**Problem**: Real-time sync doesn't work
+**Solutions**:
+- Verify `enableRealtimeSync: true` in configuration
+- Check WebSocket connectivity
+- Ensure proper authentication
+- Review network restrictions
+
+## Troubleshooting Guide
+
+### Step 1: Enable Debug Mode
+```javascript
+// Enable detailed logging
+Gx402.configure({
+  debug: true,
+  logLevel: 'verbose'
+});
+```
+
+### Step 2: Check API Key
+```javascript
+// Verify your API key is properly formatted
+const isValidKey = apiKey && apiKey.length > 10;
+if (!isValidKey) {
+  console.error('Invalid API key format');
+}
+```
+
+### Step 3: Test Network Connection
+```javascript
+// Test basic connectivity
+try {
+  await Gx402.testConnection();
+  console.log('Connection OK');
+} catch (error) {
+  console.error('Connection failed:', error);
+}
+```
+
+### Step 4: Review Platform Requirements
+- Check minimum platform versions
+- Verify required permissions
+- Ensure all dependencies are installed
+
+## Support Process
+
+### For Technical Issues
+
+1. **Describe the issue** in detail:
+   - What you're trying to do
+   - What happens instead
+   - Platform and SDK version
+   - Any error messages
+
+2. **Provide code examples**:
+   - Minimal reproducible code
+   - Configuration settings
+   - Console logs if available
+
+3. **Include environment details**:
+   - Platform version
+   - SDK version
+   - Network environment
+   - Device information
+
+### For Feature Requests
+
+- Explain the use case in detail
+- Describe how the feature would help
+- Consider if existing APIs could be extended
+- Check if similar features exist already
+
+## Response Times
+
+- **Community Support**: Usually within a few hours during business days
+- **GitHub Issues**: Team response typically within 1-2 business days
+- **Bug Reports**: Acknowledgment within 24 hours for critical issues
+
+## Resources
+
+### Official Resources
+- [Documentation](/) - Complete SDK documentation
+- [GitHub Repositories](https://github.com/Gx402) - All SDK repositories
+- [Status Page](https://status.Gx402.com) - Service status and incidents
+- [Release Notes](https://github.com/Gx402/unity-sdk/releases) - Latest updates
+
+### Community Resources
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/Gx402) - Tagged questions
+- [YouTube Tutorials](https://youtube.com/Gx402-tutorials) - Video guides
+- [Community Blog](https://blog.Gx402.com) - Developer stories and insights
+
+## Priority Support
+
+### Critical Issues
+Issues that prevent basic functionality or cause crashes:
+- Data sync failures affecting users
+- Authentication system down
+- Security vulnerabilities
+
+**Response Time**: Within 2 hours during business hours
+**Channel**: GitHub Issues with "critical" label
+
+### Standard Issues
+General questions, feature requests, and non-blocking bugs:
+- How-to questions
+- New feature suggestions  
+- Minor bugs that don't prevent functionality
+
+**Response Time**: Within 24 hours during business hours
+**Channel**: Discord or GitHub Issues as appropriate
+
+## Before Contacting Support
+
+Try these steps first:
+1. **Restart your development environment**
+2. **Check the API status page**
+3. **Update to the latest SDK version**  
+4. **Search existing issues and documentation**
+5. **Test with the example projects**
+
+## Providing Feedback
+
+We value your feedback! You can help us improve by:
+
+- Participating in our [community surveys](https://surveys.Gx402.com)
+- Sharing your project in [Community Showcase](/community/showcase) 
+- Submitting detailed bug reports
+- Suggesting new features or improvements
+
+## Paid Support
+
+For enterprise or priority support needs:
+- Dedicated support engineer
+- Faster response times
+- Direct technical assistance
+- Custom integration help
+
+Contact us at [support@Gx402.com](mailto:support@Gx402.com) for more information.
+
+---
+
+Need help? Start with our [Quick Start Guide](/quickstart), then join our [Discord community](https://discord.gg/Gx402) to connect with other developers and get real-time support!

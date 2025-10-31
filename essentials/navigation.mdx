@@ -1,87 +1,344 @@
 ---
-title: 'Navigation'
-description: 'The navigation field in docs.json defines the pages that go in the navigation menu'
-icon: 'map'
+title: "Navigation Structure"
+description: "How to organize and structure your Gx402 SDK documentation"
+icon: "sitemap"
 ---
 
-The navigation menu is the list of links on every website.
+# Navigation Structure
 
-You will likely update `docs.json` every time you add a new page. Pages do not show up automatically.
+Learn how to organize your Gx402 SDK documentation effectively using the Mintlify navigation system.
 
-## Navigation syntax
+## Navigation Overview
 
-Our navigation syntax is recursive which means you can make nested navigation groups. You don't need to include `.mdx` in page names.
+The Gx402 documentation uses Mintlify's navigation system to organize content across multiple platforms, features, and use cases.
 
-<CodeGroup>
+## Basic Navigation Structure
 
-```json Regular Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": ["quickstart"]
-        }
-      ]
-    }
-  ]
+The main navigation is configured in `docs.json` and follows this structure:
+
+```json
+{
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "index",
+              "quickstart",
+              "what-is-Gx402"
+            ]
+          },
+          {
+            "group": "Platform Guides",
+            "pages": [
+              "platforms/unity",
+              "platforms/unreal-engine",
+              "platforms/webgl",
+              "platforms/telegram",
+              "platforms/farcaster",
+              "platforms/mobile"
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-```json Nested Navigation
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "quickstart",
-            {
-              "group": "Nested Reference Pages",
-              "pages": ["nested-reference-page"]
-            }
-          ]
-        }
-      ]
-    }
-  ]
+## Tab Organization
+
+### Getting Started Tab
+Organize introductory content in the "Getting Started" tab:
+
+- **Overview**: Basic introduction and quick start
+- **Platform Guides**: Platform-specific setup instructions
+- **Tutorials**: Step-by-step learning guides
+
+### SDK Reference Tab
+Structure API and technical reference content:
+
+- **API Documentation**: Complete API reference
+- **Features**: Detailed feature documentation
+- **Configuration**: Setup and configuration guides
+
+### Tutorials Tab
+Organize learning content by skill level:
+
+- **Beginner**: Basic concepts and simple integrations
+- **Advanced**: Complex implementations and optimizations
+- **Use Cases**: Specific implementation scenarios
+
+## Platform-Specific Navigation
+
+### Unity Platform Navigation
+```
+platforms/
+├── unity.mdx
+├── unity/
+│   ├── installation.mdx
+│   ├── basic-usage.mdx
+│   ├── advanced-features.mdx
+│   └── troubleshooting.mdx
+```
+
+### Unreal Engine Navigation
+```
+platforms/
+├── unreal-engine.mdx
+├── unreal-engine/
+│   ├── installation.mdx
+│   ├── blueprints.mdx
+│   ├── cplusplus.mdx
+│   └── packaging.mdx
+```
+
+## Feature-Based Navigation
+
+Organize features in a logical hierarchy:
+
+```
+features/
+├── x402-integration.mdx
+├── real-time-sync.mdx
+├── data-management.mdx
+├── security.mdx
+└── performance.mdx
+```
+
+### Navigation Grouping Strategies
+
+#### 1. By Complexity Level
+```
+tutorials/
+├── beginner/
+│   ├── hello-world.mdx
+│   └── basic-integration.mdx
+├── intermediate/
+│   ├── advanced-sync.mdx
+│   └── custom-workflows.mdx
+└── advanced/
+    ├── performance.mdx
+    └── security.mdx
+```
+
+#### 2. By Use Case
+```
+guides/
+├── multiplayer/
+│   ├── real-time-sync.mdx
+│   └── anti-cheat.mdx
+├── monetization/
+│   ├── in-app-purchases.mdx
+│   └── analytics.mdx
+└── social/
+    ├── telegram-integration.mdx
+    └── leaderboards.mdx
+```
+
+## API Reference Navigation
+
+Structure your API documentation for easy access:
+
+```
+api-reference/
+├── introduction.mdx
+├── authentication.mdx
+├── core-functions.mdx
+├── unity-sdk.mdx
+├── unreal-sdk.mdx
+├── webgl-sdk.mdx
+├── telegram-sdk.mdx
+└── farcaster-sdk.mdx
+```
+
+### Versioned Documentation Navigation
+
+If supporting multiple versions:
+
+```json
+{
+  "versions": ["v1", "v2", "v3"],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "v3 Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["index", "quickstart"]
+          }
+        ]
+      },
+      {
+        "tab": "Migration",
+        "groups": [
+          {
+            "group": "Migrating to v3",
+            "pages": ["migration-v2-v3", "breaking-changes"]
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-</CodeGroup>
+## Contextual Navigation
 
-## Folders
+### Related Content Links
+Use Cards to link related content:
 
-Simply put your MDX files in folders and update the paths in `docs.json`.
+```md
+<CardGroup cols={2}>
+<Card
+  title="Unity Integration"
+  icon="unity"
+  href="/platforms/unity"
+>
+  Detailed Unity platform guide
+</Card>
 
-For example, to have a page at `https://yoursite.com/your-folder/your-page` you would make a folder called `your-folder` containing an MDX file called `your-page.mdx`.
+<Card
+  title="Real-time Sync"
+  icon="sync"
+  href="/features/real-time-sync"
+>
+  Advanced synchronization features
+</Card>
+</CardGroup>
+```
 
-<Warning>
+### Breadcrumbs Implementation
+While Mintlify handles breadcrumbs automatically, you can guide users with related page links:
 
-You cannot use `api` for the name of a folder unless you nest it inside another folder. Mintlify uses Next.js which reserves the top-level `api` folder for internal server calls. A folder name such as `api-reference` would be accepted.
+```md
+## Next Steps
 
-</Warning>
+Now that you understand basic integration:
 
-```json Navigation With Folder
-"navigation": {
-  "tabs": [
-    {
-      "tab": "Docs",
-      "groups": [
+- [Advanced Sync Features](/features/real-time-sync)
+- [Multiplayer Implementation](/tutorials/multiplayer)
+- [Security Best Practices](/features/security)
+```
+
+## Mobile Navigation Considerations
+
+### Tab Optimization
+For mobile users, consider:
+
+- Short, descriptive tab names
+- Logical grouping to minimize scrolling
+- Progressive disclosure of complex options
+
+### Content Hierarchy
+```
+Mobile-Optimized Navigation:
+├── Quick Start (2-3 steps only)
+├── Platform Guides (collapsible by platform)
+├── Core Features (top 3 features visible)
+├── API Reference (searchable)
+└── Support (chat shortcut)
+```
+
+## Search Optimization
+
+### Content Titles and Descriptions
+Ensure each page has clear titles and descriptions for search:
+
+```md
+---
+title: "Unity Integration Guide"
+description: "Complete guide to integrating Gx402 SDK with Unity projects"
+---
+
+# Unity Integration Guide
+```
+
+### Navigation Labels
+Use descriptive but concise labels:
+
+- ✅ "Real-time Sync" 
+- ✅ "Multiplayer Features"
+- ❌ "RT Sync" 
+- ❌ "MP Features and Tools for Real-time Multiplayer Gaming"
+
+## Best Practices
+
+### Navigation Naming
+- Use consistent terminology throughout
+- Match user mental models ("Authentication" vs "Login")
+- Keep labels scannable and clear
+- Avoid jargon in navigation labels
+
+### Grouping Content
+- Group by user intent rather than technical similarity
+- Limit groups to 5-7 items for cognitive load
+- Use progressive disclosure for complex topics
+- Maintain logical content flow between pages
+
+### Cross-Platform Consistency
+- Maintain consistent navigation structure across platforms
+- Use same terminology for similar features
+- Provide platform-specific context while keeping navigation similar
+- Include "See also" sections for platform differences
+
+## Global Navigation Elements
+
+### Header Links
+Add important external links in the global navigation:
+
+```json
+{
+  "navigation": {
+    "global": {
+      "anchors": [
         {
-          "group": "Group Name",
-          "pages": ["your-folder/your-page"]
+          "anchor": "GitHub",
+          "href": "https://github.com/Gx402",
+          "icon": "github"
+        },
+        {
+          "anchor": "Discord",
+          "href": "https://discord.gg/Gx402",
+          "icon": "discord"
         }
       ]
     }
-  ]
+  }
 }
 ```
 
-## Hidden pages
+### Footer Navigation
+Include essential support and legal links:
 
-MDX files not included in `docs.json` will not show up in the sidebar but are accessible through the search bar and by linking directly to them.
+```json
+{
+  "footer": {
+    "socials": {
+      "x": "https://x.com/Gx402",
+      "github": "https://github.com/Gx402",
+      "linkedin": "https://linkedin.com/company/Gx402"
+    }
+  }
+}
+```
+
+## Testing Navigation
+
+### User Flow Testing
+- Test that users can reach all important content in 3 clicks or less
+- Verify navigation works on mobile and desktop
+- Ensure search results lead to appropriate content
+- Check that "Next Steps" make logical sense
+
+### Accessibility Considerations
+- Keyboard navigation works through all navigation elements  
+- Screen readers can properly interpret the navigation
+- Semantic HTML structure is maintained
+- ARIA labels are appropriate for complex navigation
+
+The navigation structure should make it easy for users to find what they need, whether they're beginners getting started or experienced developers looking for specific API details.

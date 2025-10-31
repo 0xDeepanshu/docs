@@ -1,76 +1,236 @@
 ---
-title: "Claude Code setup"
-description: "Configure Claude Code for your documentation workflow"
-icon: "asterisk"
+title: "AI Tools Integration"
+description: "How Gx402 SDK works with AI development tools"
+icon: "robot"
 ---
 
-Claude Code is Anthropic's official CLI tool. This guide will help you set up Claude Code to help you write and maintain your documentation.
+# AI Tools Integration
 
-## Prerequisites
+The Gx402 SDK integrates seamlessly with popular AI development tools to enhance your development workflow and productivity.
 
-- Active Claude subscription (Pro, Max, or API access)
+## Overview
 
-## Setup
+AI tools can significantly accelerate your development process when working with Gx402 SDK. This guide covers integration with the most popular tools.
 
-1. Install Claude Code globally:
+## Cursor Integration
 
-  ```bash
-  npm install -g @anthropic-ai/claude-code
+Cursor is a powerful AI-powered code editor that can help you develop with the Gx402 SDK more efficiently.
+
+### Setup for Gx402 Development
+
+1. Install Cursor from [cursor.sh](https://cursor.sh)
+2. Open your project directory in Cursor
+3. Install the Gx402 extension or ensure proper language support
+
+### AI-Powered Features with Gx402
+
+#### Code Completion
+Cursor can suggest Gx402 SDK methods and parameters:
+
+```javascript
+// Just start typing "Gx402." and Cursor will suggest:
+Gx402.processX402Data(data, options)
+// or
+Gx402.authenticate(userId, token)
+// or
+Gx402.sync(key, data)
 ```
 
-2. Navigate to your docs directory.
-3. (Optional) Add the `CLAUDE.md` file below to your project.
-4. Run `claude` to start.
+#### Context-Aware Suggestions
+When working with Gx402 functionality, Cursor understands:
+- Available methods and parameters
+- Proper initialization patterns
+- Error handling best practices
+- Platform-specific implementations
 
-## Create `CLAUDE.md`
+#### Code Generation
+Ask Cursor to generate common Gx402 patterns:
 
-Create a `CLAUDE.md` file at the root of your documentation repository to train Claude Code on your specific documentation standards:
+> "Generate a player state sync function using Gx402 SDK"
 
-````markdown
-# Mintlify documentation
+```javascript
+const syncPlayerState = async (Gx402, playerId, state) => {
+  try {
+    await Gx402.sync('player-state', {
+      playerId,
+      state,
+      timestamp: Date.now()
+    });
+    console.log(`Player ${playerId} state synced`);
+  } catch (error) {
+    console.error('Sync failed:', error);
+  }
+};
+```
 
-## Working relationship
-- You can push back on ideas-this can lead to better documentation. Cite sources and explain your reasoning when you do so
-- ALWAYS ask for clarification rather than making assumptions
-- NEVER lie, guess, or make up information
+### Best Practices with Cursor
 
-## Project context
-- Format: MDX files with YAML frontmatter
-- Config: docs.json for navigation, theme, settings
-- Components: Mintlify components
+1. **Explain your intent clearly** when asking for code generation
+2. **Reference your platform** (Unity, Unreal, WebGL, etc.) for accurate suggestions
+3. **Ask for security considerations** to ensure best practices
+4. **Request error handling** patterns specific to your use case
 
-## Content strategy
-- Document just enough for user success - not too much, not too little
-- Prioritize accuracy and usability of information
-- Make content evergreen when possible
-- Search for existing information before adding new content. Avoid duplication unless it is done for a strategic reason
-- Check existing patterns for consistency
-- Start by making the smallest reasonable changes
+## Claude Code Integration
 
-## Frontmatter requirements for pages
-- title: Clear, descriptive page title
-- description: Concise summary for SEO/navigation
+Claude Code (Anthropic) can help with more complex Gx402 SDK implementations.
 
-## Writing standards
-- Second-person voice ("you")
-- Prerequisites at start of procedural content
-- Test all code examples before publishing
-- Match style and formatting of existing pages
-- Include both basic and advanced use cases
-- Language tags on all code blocks
-- Alt text on all images
-- Relative paths for internal links
+### Setup
 
-## Git workflow
-- NEVER use --no-verify when committing
-- Ask how to handle uncommitted changes before starting
-- Create a new branch when no clear branch exists for changes
-- Commit frequently throughout development
-- NEVER skip or disable pre-commit hooks
+1. Use Claude in your preferred interface (web, desktop, or IDE plugin)
+2. Ensure Claude has access to your codebase if needed
 
-## Do not
-- Skip frontmatter on any MDX file
-- Use absolute URLs for internal links
-- Include untested code examples
-- Make assumptions - always ask for clarification
-````
+### Advanced Use Cases
+
+#### Architecture Planning
+Ask Claude to help plan complex Gx402 implementations:
+
+> "How should I structure real-time multiplayer sync for a Unity game using Gx402 SDK?"
+
+#### Problem Solving
+Get help with specific challenges:
+
+> "My sync is failing with 'NETWORK_ERROR' - what are common causes?"
+
+#### Code Review
+Have Claude review your Gx402 implementations:
+
+> "Review this Gx402 authentication code for security issues"
+
+#### Migration Assistance
+> "Help me migrate from direct API calls to Gx402 SDK in my existing codebase"
+
+### Claude-Specific Tips for Gx402
+
+1. **Provide context** about your platform and use case
+2. **Share relevant code snippets** for targeted advice
+3. **Ask for multiple approaches** to solve complex problems
+4. **Request security and performance considerations**
+
+## Windsurf Integration
+
+Windsurf Studio includes AI features that can enhance Gx402 development.
+
+### AI Features that Help with Gx402
+
+#### Code Suggestions
+Windsurf can suggest appropriate Gx402 methods based on context:
+- Initialization patterns
+- Error handling structures  
+- Sync strategies
+- Authentication flows
+
+#### Documentation Generation
+Generate documentation for your Gx402 implementations:
+- JSDoc comments for functions
+- README sections for Gx402 features
+- API documentation for custom wrappers
+
+#### Testing Assistance
+Generate tests for your Gx402 integrations:
+- Unit tests for individual functions
+- Integration tests for sync operations
+- Mock implementations for testing
+
+### Optimizing Windsurf for Gx402 Development
+
+1. **Keep related files open** to provide context for AI suggestions
+2. **Use clear function names** that reflect Gx402 functionality
+3. **Maintain consistent code style** for better AI understanding
+4. **Ask for platform-specific recommendations**
+
+## General AI Development Best Practices
+
+### Prompt Engineering for Gx402
+
+#### Good Prompts
+```
+"Write a Unity C# function that initializes Gx402 SDK with error handling"
+```
+
+#### Better Prompts  
+```
+"I'm building a Unity game and need to initialize the Gx402 SDK on app start. 
+Include proper error handling, debug logging for development, and follow Unity best practices. 
+The API key should be configurable through a scriptable object."
+```
+
+### Security Considerations
+
+When using AI tools with Gx402:
+
+1. **Never share API keys** in prompts
+2. **Verify generated security code** before implementation
+3. **Ensure proper authentication patterns** are used
+4. **Double-check encryption configurations**
+
+### Code Verification
+
+Always verify AI-generated Gx402 code:
+
+1. **Test functionality** thoroughly
+2. **Check for proper error handling**
+3. **Verify security configurations**
+4. **Ensure performance considerations** are met
+5. **Confirm platform-specific requirements**
+
+## Example: AI-Assisted Implementation
+
+Here's how you might work with an AI tool to implement a feature:
+
+### Initial Request
+> "I need to implement player position sync across platforms using Gx402 SDK"
+
+### AI Response
+```javascript
+// Example implementation
+class PlayerSync {
+  constructor(Gx402) {
+    this.Gx402 = Gx402;
+    this.playerId = null;
+  }
+  
+  async initialize(playerId) {
+    this.playerId = playerId;
+    
+    // Subscribe to position updates from other players
+    this.Gx402.subscribe('player-position', (data) => {
+      if (data.playerId !== this.playerId) {
+        this.updateRemotePlayer(data);
+      }
+    });
+  }
+  
+  async syncPosition(x, y) {
+    await this.Gx402.sync('player-position', {
+      playerId: this.playerId,
+      position: { x, y },
+      timestamp: Date.now()
+    });
+  }
+}
+```
+
+### Follow-up Request
+> "Add error handling and rate limiting to prevent sync spam"
+
+The AI would then suggest improvements like exponential backoff, retry logic, and rate limiting.
+
+## Maximizing Productivity
+
+### Recommended Workflow
+
+1. **Plan with AI**: Ask for architectural suggestions
+2. **Generate boilerplate**: Let AI create basic implementations
+3. **Refine manually**: Add your specific game logic
+4. **Review with AI**: Check for best practices and issues
+5. **Test thoroughly**: Always verify functionality
+
+### Common AI-Assisted Patterns
+
+- **Initialization helpers** for different platforms
+- **Error handling wrappers** that follow best practices
+- **Sync strategy templates** for different game types
+- **Performance optimization** suggestions
+- **Security validation** for sensitive operations
+
+AI tools are powerful accelerators for Gx402 development, but always combine AI suggestions with your domain knowledge and thorough testing.

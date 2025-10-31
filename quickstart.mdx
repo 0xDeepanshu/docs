@@ -1,80 +1,243 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick Start"
+description: "Get started with Gx402 SDK in minutes"
 ---
 
-## Get started in three steps
+## Get started with Gx402 in three steps
+<Card
+  title="⚠️ Developer Preview"
+  icon="alert-triangle"
+  color="orange"
+>
+  The Gx402 SDK is still in active development.  
+  Some features may not function as expected, and APIs are subject to change.  
+  For production use, please wait for the stable release.
+</Card>
+Integrate the Gx402 SDK into your game and start using x402 functionality across multiple platforms.
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
+### Step 1: Install the SDK
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+  <Accordion icon="copy" title="Choose your platform">
+    Select the platform you're developing for:
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+    <Tabs>
+      <TabItem value="unity" label="Unity">
+        Install via Unity Package Manager (Git URL):
+        1. Open your Unity project
+        2. Go to `Window` > `Package Manager`
+        3. Click the `+` button and select "Add package from git URL..."
+        4. Enter: `https://github.com/Gx402/unity-sdk.git`
+        
+        Or via Unity Asset Store:
+        1. Search for "Gx402 Payment SDK" in the Asset Store.
+      </TabItem>
+      <TabItem value="unreal" label="Unreal Engine">
+        Download from Unreal Marketplace:
+        1. Search for "Gx402 Payment SDK" in the Unreal Marketplace.
+        
+        Or clone source:
+        1. `git clone https://github.com/Gx402/unreal-sdk.git`
+        2. Copy to `YourProject/Plugins/Gx402`
+      </TabItem>
+      <TabItem value="webgl" label="WebGL">
+        Install via NPM:
+        ```bash
+        npm install @Gx402/sdk
+        ```
+      </TabItem>
+      <TabItem value="mobile" label="Mobile">
+        Install via NPM:
+        ```bash
+        npm install @Gx402/react-native
+        ```
+        iOS additional setup:
+        ```bash
+        cd ios && pod install
+        ```
+      </TabItem>
+      <TabItem value="telegram" label="Telegram">
+        Install via NPM:
+        ```bash
+        npm install @Gx402/sdk
+        ```
+      </TabItem>
+      <TabItem value="farcaster" label="Farcaster">
+        Install via NPM:
+        ```bash
+        npm install @Gx402/sdk
+        ```
+      </TabItem>
+    </Tabs>
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+  <Accordion icon="key" title="Get your API key">
+    1. Sign up at [https://Gx402.com](https://Gx402.com)
+    2. Create a new project in your dashboard
+    3. Copy your API key from the project settings
+    4. Store it securely (never commit to source control!)
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+### Step 2: Initialize the SDK
 
 <AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Accordion icon="code" title="Basic initialization">
+    Initialize the SDK in your game's startup code:
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
+    <Tabs>
+      <TabItem value="javascript" label="JavaScript/WebGL">
+        ```javascript
+        import { Gx402Client } from '@Gx402/sdk';
+        
+        const Gx402 = new Gx402Client({
+          receiverAddress: 'OxYourWalletAddress',
+          network: 'base',
+          // Auto-detects environment
+        });
+        ```
+      </TabItem>
+      <TabItem value="csharp" label="C# (Unity)">
+        ```csharp
+        using Gx402;
+        
+        public class GameStore : MonoBehaviour
+        {
+            private Gx402Client client;
+        
+            void Start()
+            {
+                client = new Gx402Client(
+                    receiverAddress: "OxYourWalletAddress",
+                    network: Network.Base,
+                    facilitatorUrl: "https://api.Gx402.io"
+                );
+            }
+        }
+        ```
+      </TabItem>
+      <TabItem value="cpp" label="C++ (Unreal)">
+        ```cpp
+        // In your game mode or player controller header file
+        #include "Gx402SDK.h"
+        
+        UCLASS()
+        class YOURGAME_API AYourGameMode : public AGameModeBase
+        {
+            GENERATED_BODY()
+        
+        public:
+            virtual void StartPlay() override;
+        
+        private:
+            void InitializeGx402();
+        };
+        
+        // In the implementation file
+        void AYourGameMode::StartPlay()
+        {
+            Super::StartPlay();
+            InitializeGx402();
+        }
+        
+        void AYourGameMode::InitializeGx402()
+        {
+            // Configure the SDK
+            FGx402Config Config;
+            Config.ApiKey = TEXT("YOUR_API_KEY");
+            Config.bEnableRealtimeSync = true;
+            
+            // Initialize the SDK
+            UGx402Manager::Initialize(Config);
+        }
+        ```
+      </TabItem>
+      <TabItem value="swift" label="Swift (iOS)">
+        ```swift
+        import Gx402SDK
+        
+        let config = Gx402Config(
+            apiKey: "YOUR_API_KEY",
+            environment: .production
+        )
+        
+        Gx402Manager.shared.initialize(with: config) { success, error in
+            if success {
+                print("Gx402 SDK initialized successfully")
+            }
+        }
+        ```
+      </TabItem>
+      <TabItem value="kotlin" label="Kotlin (Android)">
+        ```kotlin
+        import com.Gx402.sdk.Gx402SDK
+        import com.Gx402.sdk.models.Gx402Config
+        
+        class MainActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                
+                val config = Gx402Config.Builder()
+                    .setApiKey("YOUR_API_KEY")
+                    .setEnvironment(Gx402Config.ENVIRONMENT_PRODUCTION)
+                    .build()
+                
+                Gx402SDK.initialize(this, config) { success, error ->
+                    if (success) {
+                        Log.d("Gx402", "SDK initialized successfully")
+                    }
+                }
+            }
+        }
+        ```
+      </TabItem>
+      <TabItem value="telegram" label="Telegram">
+        ```javascript
+        import { Gx402Client } from '@Gx402/sdk';
+        
+        const Gx402 = new Gx402Client({
+            receiverAddress: 'OxYourWalletAddress',
+            network: 'base',
+            walletProvider: 'telegram',
+        });
+        ```
+      </TabItem>
+      <TabItem value="farcaster" label="Farcaster">
+        ```javascript
+        import { Gx402Client } from '@Gx402/sdk';
+        
+        const Gx402 = new Gx402Client({
+            receiverAddress: 'OxYourWalletAddress',
+            network: 'base',
+            // Auto-detects Farcaster environment
+        });
+        ```
+      </TabItem>
+    </Tabs>
+  </Accordion>
+  <Accordion icon="user" title="Authenticate users">
+    Authenticate users to enable personalized x402 functionality:
+    
+    ```javascript
+    // JavaScript example
+    await Gx402.authenticate('user-id', 'auth-token');
+    
+    // Now you can use personalized x402 features
+    const result = Gx402.processX402Data(gameData);
+    ```
   </Accordion>
 </AccordionGroup>
 
-### Step 3: Go live
+### Step 3: Start using x402 features
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
+<Accordion icon="rocket" title="Enable x402 functionality">
+  Once the SDK is initialized, you can start using Gx402 features. The core functionality revolves around processing payments and integrating with the x402 protocol.
+  
+  For platform-specific examples, refer to the individual platform guides:
+  
+  *   [Unity Integration](/platforms/unity)
+  *   [Unreal Engine Integration](/platforms/unreal-engine)
+  *   [WebGL Integration](/platforms/webgl)
+  *   [Mobile Integration](/platforms/mobile)
+  *   [Telegram Integration](/platforms/telegram)
+  *   [Farcaster Integration](/platforms/farcaster)
 </Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

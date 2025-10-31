@@ -1,16 +1,10 @@
-# Mintlify Starter Kit
+# Gx402 SDK Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Welcome to the official documentation for the Gx402 SDK - the complete x402 functionality for games. This documentation covers everything you need to integrate Gx402 features into your games across multiple platforms including Unity, Unreal Engine, Web, Mobile, Telegram, and Farcaster.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## About Gx402 SDK
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+The Gx402 SDK provides developers with all the power of x402 functionality designed specifically for gaming applications. Our SDK enables seamless integration of x402 features across multiple platforms, with real-time synchronization and enterprise-grade security.
 
 ## Development
 
@@ -28,9 +22,16 @@ mint dev
 
 View your local preview at `http://localhost:3000`.
 
-## Publishing changes
+## Contributing
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+We welcome contributions from the community! If you'd like to improve our documentation:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+For major changes, please open an issue first to discuss what you would like to change.
 
 ## Need help?
 
@@ -40,4 +41,9 @@ Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/sett
 - If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
 
 ### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- [Gx402 SDK GitHub Repository](https://github.com/Gx402/Gx402-sdk)
+- [Community Discord](https://discord.gg/Gx402)
+- [Official Website](https://Gx402.com)
+
+### Support
+For support with the Gx402 SDK, please visit our Discord community or create an issue in our GitHub repository.

@@ -1,0 +1,230 @@
+---
+title: "Frequently Asked Questions"
+description: "Answers to common questions about Gx402 SDK"
+icon: "question-circle"
+---
+
+# Frequently Asked Questions
+
+Find answers to common questions about the Gx402 SDK, installation, usage, and troubleshooting.
+
+## Getting Started
+
+### What is Gx402 SDK?
+The Gx402 SDK provides developers with comprehensive x402 functionality specifically designed for gaming applications. It enables cross-platform game development with real-time synchronization, data processing, and security features across Unity, Unreal Engine, WebGL, Mobile, Telegram, and Farcaster platforms.
+
+### Who should use Gx402 SDK?
+The SDK is ideal for game developers who want to:
+- Build cross-platform games with shared game state
+- Implement real-time multiplayer features
+- Leverage x402 functionality in their games  
+- Create social gaming experiences across different platforms
+- Focus on game development rather than infrastructure
+
+### How much does Gx402 cost?
+We offer a generous free tier for small projects and indie developers. For production applications and larger teams, we have flexible pricing tiers based on usage. Check our [pricing page](https://Gx402.com/pricing) for current plans.
+
+## Installation & Setup
+
+### How do I get an API key?
+1. Visit [Gx402.com](https://Gx402.com) and sign up for an account
+2. Create a new project in your dashboard
+3. Copy your API key from the project settings
+4. Use the key to initialize the SDK in your game
+
+### Do I need different API keys for different platforms?
+No, you can use the same API key across all supported platforms for the same project. However, we recommend using separate keys for development vs. production environments.
+
+### How do I install the SDK on my platform?
+Each platform has specific installation instructions:
+- **Unity**: Use Package Manager with git URL
+- **Unreal Engine**: Download and install the plugin
+- **WebGL**: Use npm or CDN
+- **Mobile**: Use platform package managers (CocoaPods, Gradle)
+
+See our [platform guides](/platforms) for detailed instructions.
+
+## Authentication & Security
+
+### How does authentication work?
+The SDK provides multiple authentication methods:
+- Simple token-based authentication
+- OAuth integration for social platforms
+- Custom authentication using your existing system
+- Anonymous authentication for guest users
+
+### Is my data secure with Gx402?
+Yes, we implement multiple layers of security:
+- End-to-end encryption for all data
+- Secure authentication protocols
+- Compliance with industry standards
+- Regular security audits
+
+All data transmission is encrypted by default using AES-256 encryption.
+
+### What permissions does the SDK require?
+The SDK only requests necessary permissions:
+- Network access for synchronization
+- Storage access for offline capability (mobile)
+- No unnecessary permissions like location or contacts
+- Permission requests are always user-facing with clear explanations
+
+## Sync & Networking
+
+### How does real-time synchronization work?
+The SDK uses an optimized synchronization protocol that:
+- Tracks changes to game state efficiently
+- Resolves conflicts automatically using configurable strategies
+- Works across all supported platforms
+- Handles offline scenarios with automatic sync when reconnected
+
+### Can I control sync frequency?
+Yes, you can configure sync settings:
+- Set custom sync intervals (default is 1 second)
+- Choose optimistic vs. pessimistic sync strategies
+- Configure batch sync for better performance
+- Disable sync for specific data types when needed
+
+### What happens when players go offline?
+- Local changes are queued for sync
+- Players can continue playing offline
+- Changes are automatically synced when connection is restored
+- Conflict resolution handles concurrent changes
+
+## Performance
+
+### How much performance overhead does the SDK add?
+The SDK is optimized for gaming performance:
+- Minimal CPU overhead during normal operation
+- Efficient memory usage with configurable limits
+- Network usage optimized for gaming scenarios
+- Most operations are asynchronous to prevent blocking
+
+Typical overhead is less than 1% of total game performance.
+
+### Does the SDK work well on mobile devices?
+Yes, we have specific optimizations for mobile:
+- Reduced network usage to preserve battery
+- Efficient data compression
+- Offline-first architecture
+- Background sync with power management
+
+### How does it handle large amounts of data?
+- Automatic data compression
+- Smart sync that only transfers changes
+- Configurable data limits and batching
+- Streaming support for large datasets
+
+## Platform Support
+
+### Which platforms are supported?
+Current support includes:
+- Unity (all versions 2019.4+)
+- Unreal Engine (4.26+ and 5.x)
+- WebGL (modern browsers)
+- iOS (12.0+)
+- Android (API level 21+)
+- Telegram mini apps
+- Farcaster integrations
+
+### Can I connect different platforms together?
+Yes! Cross-platform connectivity is a core feature:
+- A player on mobile can play with someone on desktop
+- Progression syncs across all platforms
+- Multiplayer games work seamlessly between platforms
+- All platforms use the same synchronization protocol
+
+### Is there a web-based management interface?
+Yes, our dashboard provides:
+- Real-time usage and performance metrics
+- Player management and analytics
+- API key and project configuration
+- Event logs and troubleshooting tools
+
+## Troubleshooting
+
+### The SDK isn't initializing properly
+Common causes and solutions:
+- **Invalid API key**: Verify it's copied correctly and hasn't expired
+- **Network issues**: Check connectivity and firewall settings
+- **Platform requirements**: Ensure minimum platform versions
+- **Configuration errors**: Review initialization parameters
+
+### Sync is not working between clients
+- Verify all clients are authenticated
+- Check that real-time sync is enabled in configuration
+- Confirm all clients are using the same project API key
+- Ensure network connectivity between clients
+
+### Getting authentication errors
+- Verify user credentials are valid
+- Check that authentication tokens haven't expired
+- Ensure proper authentication flow is implemented
+- Review server time synchronization for time-based tokens
+
+### Performance issues in my game
+- Reduce sync frequency if updating too frequently
+- Optimize the data being synced (sync only essential data)
+- Use batch operations for multiple changes
+- Check for memory leaks in your implementation
+
+## Development Best Practices
+
+### How should I structure my game data for sync?
+- Keep synced data lightweight
+- Separate game logic from sync logic
+- Use consistent data schemas across platforms
+- Consider using data normalization for complex objects
+
+### What's the best way to handle conflicts?
+- Implement custom conflict resolution for important data
+- Use the SDK's built-in strategies for simple cases
+- Validate data before syncing
+- Provide user feedback when conflicts occur
+
+### How do I handle version compatibility?
+- The SDK handles most backward compatibility automatically
+- Use feature detection for advanced functionality
+- Plan for deprecation with version checking
+- Test with previous SDK versions during development
+
+## Billing & Support
+
+### What are the usage limits?
+Free tier includes:
+- Up to 1,000 monthly active players
+- 1GB data transfer per month
+- Basic support via community channels
+
+Paid tiers offer increased limits and priority support. See our [pricing page](https://Gx402.com/pricing) for details.
+
+### How do I get support?
+- **Documentation**: Comprehensive guides and API references
+- **Community**: Discord support channel with other developers
+- **GitHub Issues**: For bug reports and feature requests
+- **Email Support**: For paid subscribers
+- **Priority Support**: For enterprise customers
+
+### Can I migrate my existing game to Gx402?
+Yes! We provide migration tools and support for common game engines:
+- Import existing player data
+- Preserve progression during migration
+- Gradual rollout capabilities
+- Custom migration assistance available
+
+## Advanced Features
+
+### Can I use custom x402 processing?
+Yes, the SDK supports custom processing pipelines:
+- Define custom x402 functions
+- Implement specialized game logic
+- Process data with custom algorithms
+- Extend core functionality
+
+### Is there server-side support?
+- Client-side SDK is our primary offering
+- Server-side tools available for advanced use cases
+- Webhook support for server integration
+- Custom server solutions available upon request
+
+Still have questions? Join our [Discord community](https://discord.gg/Gx402) or check out our [Community Support](/community/support) page for more help!

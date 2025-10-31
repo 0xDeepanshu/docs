@@ -1,4 +1,24 @@
 ---
-title: 'New Plant'
-openapi: 'WEBHOOK /plant/webhook'
+title: "Webhook Events"
+description: "Documentation for webhook events in Gx402 API"
 ---
+
+# Webhook Events
+
+This section details the webhook events that Gx402 can send to your configured endpoint.
+
+### Endpoint
+```
+POST {developer_webhook_url}
+```
+
+### Body
+
+```json
+{
+  "event": "payment.succeeded",
+  "paymentId": "uuid",
+  "data": { ... },
+  "signature": "HMAC-SHA256"
+}
+```

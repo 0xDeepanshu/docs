@@ -1,0 +1,101 @@
+---
+title: "Core Functions API"
+description: "API reference for Gx402 SDK core functionality"
+---
+
+## Core Functions API
+
+The core functions of the Gx402 SDK provide the essential x402 functionality for games, focusing on seamless payment processing and multi-chain integration.
+
+## initialize()
+
+Initialize the Gx402 SDK with configuration options. This sets up the necessary infrastructure for x402 payment processing and multi-chain support.
+
+### JavaScript/WebGL
+```javascript
+const Gx402 = new Gx402SDK({
+  apiKey: 'your-api-key',
+  environment: 'production', // or 'development'
+  enableRealtimeSync: true,
+  debug: false
+});
+
+await Gx402.init();
+```
+
+#### Configuration Options
+- `apiKey` (string, required): Your Gx402 API key
+- `environment` (string): 'production' or 'development' (default: 'production')
+- `enableRealtimeSync` (boolean): Enable real-time synchronization (default: false)
+- `debug` (boolean): Enable debug logging (default: false)
+
+### Unity (C#)
+```csharp
+Gx402Manager.Initialize("your-api-key");
+
+Gx402Manager.Configure(new Gx402Config {
+    EnableRealtimeSync = true,
+    LogLevel = Gx402LogLevel.Debug
+});
+```
+
+### Unreal Engine (C++)
+```cpp
+FGx402Config Config;
+Config.ApiKey = TEXT("your-api-key");
+Config.bEnableRealtimeSync = true;
+Config.LogLevel = EGx402LogLevel::Debug;
+
+UGx402Manager::Initialize(Config);
+```
+
+## processX402Data()
+
+Process game data with x402 functionality. This function leverages the built-in x402 facilitator infrastructure to handle micropayments and other x402 protocol interactions.
+
+### JavaScript
+```javascript
+const result = await Gx402.processX402Data({
+  data: gameData,
+  options: {
+    feature: 'advanced-gaming',
+    sync: true,
+    encrypt: true
+  }
+});
+```
+
+#### Parameters
+- `params` (Object): Processing parameters
+  - `data` (any): Game data to process
+  - `options` (Object, optional): Processing options
+    - `feature` (string): Specific x402 feature to use
+    - `sync` (boolean): Whether to sync the result
+    - `encrypt` (boolean): Whether to encrypt the data
+
+#### Returns
+- `Promise<any>`: Processed data with x402 enhancements
+
+### Unity (C#)
+```csharp
+var x402Result = Gx402Manager.ProcessX402Data(gameData);
+```
+
+#### Parameters
+- `object gameData`: Game data to process with x402
+
+#### Returns
+- `object`: Processed data with x402 enhancements
+
+### Unreal Engine (C++)
+```cpp
+FGx402Result Result = UGx402Manager::ProcessX402Data(GameData);
+```
+
+## Multi-chain Support
+
+The Gx402 SDK is designed with multi-chain support, accommodating both EVM (Ethereum Virtual Machine) and non-EVM blockchains. This ensures flexibility and broad compatibility for your game's payment infrastructure.
+
+## Built-in x402 Facilitator Infrastructure
+
+The SDK includes a built-in x402 facilitator infrastructure that handles the complexities of the x402 payment protocol. This allows developers to integrate micropayments without needing deep blockchain knowledge.

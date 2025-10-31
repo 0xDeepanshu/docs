@@ -1,0 +1,516 @@
+---
+title: "Basic Integration Tutorial"
+description: "Step-by-step guide to integrating Gx402 SDK in your game"
+icon: "book"
+---
+
+# Basic Integration Tutorial
+
+This tutorial will guide you through integrating the Gx402 SDK into an existing game project, covering the essential steps to get x402 functionality working.
+
+## Overview
+
+By the end of this tutorial, you will have:
+- Integrated the Gx402 SDK into your game
+- Set up basic x402 processing
+- Implemented simple data synchronization
+- Added user authentication
+
+## Prerequisites
+
+- An existing game project (Unity, Unreal, WebGL, or other supported platform)
+- A Gx402 API key from your [dashboard](https://Gx402.com/dashboard)
+- Basic knowledge of your game's architecture
+
+## Step 1: Install the SDK
+
+### For WebGL/JavaScript Projects
+
+If you're using NPM:
+
+```bash
+npm install @Gx402/web-sdk
+```
+
+If you prefer CDN, add to your HTML:
+
+```html
+<script src="https://unpkg.com/@Gx402/web-sdk/dist/Gx402.min.js"></script>
+```
+
+### For Unity Projects
+
+1. Open your Unity project
+2. Go to `Window` > `Package Manager`
+3. Click the `+` button and select "Add package from git URL"
+4. Enter: `https://github.com/Gx402/unity-sdk.git`
+
+### For Unreal Engine Projects
+
+1. Download the plugin from [Releases](https://github.com/Gx402/unreal-sdk/releases)
+2. Create a `Plugins` folder in your project if it doesn't exist
+3. Extract the plugin to `YourProject/Plugins/Gx402-sdk`
+4. Restart Unreal Editor and enable the plugin
+
+## Step 2: Initialize the SDK
+
+### WebGL/JavaScript
+
+```javascript
+import { Gx402SDK } from '@Gx402/web-sdk';
+
+// Initialize early in your game startup
+const Gx402 = new Gx402SDK({
+  apiKey: 'YOUR_API_KEY_HERE',
+  environment: 'development', // Change to 'production' for live builds
+  enableRealtimeSync: true,
+  debug: true // Set to false in production
+});
+
+// Wait for initialization
+await Gx402.init();
+console.log('Gx402 SDK initialized successfully');
+```
+
+### Unity (C#)
+
+```csharp
+using Gx402;
+using UnityEngine;
+
+public class Gx402Manager : MonoBehaviour
+{
+    void Start()
+    {
+        // Initialize the SDK
+        Gx402Manager.Initialize("YOUR_API_KEY_HERE");
+        
+        // Configure options
+        Gx402Manager.Configure(new Gx402Config
+        {
+            EnableRealtimeSync = true,
+            LogLevel = Gx402LogLevel.Debug
+        });
+        
+        Debug.Log("Gx402 SDK initialized successfully");
+    }
+}
+```
+
+### Unreal Engine (C++)
+
+```cpp
+#include "Gx402SDK.h"
+
+void AMyGameMode::StartPlay()
+{
+    Super::StartPlay();
+    
+    // Configure the SDK
+    FGx402Config Config;
+    Config.ApiKey = TEXT("YOUR_API_KEY_HERE");
+    Config.bEnableRealtimeSync = true;
+    Config.LogLevel = EGx402LogLevel::Debug;
+    
+    // Initialize the SDK
+    UGx402Manager::Initialize(Config);
+    
+    UE_LOG(LogTemp, Log, TEXT("Gx402 SDK initialized successfully"));
+}
+```
+
+## Step 3: Add User Authentication
+
+Authentication is crucial for personalized x402 experiences.
+
+### WebGL/JavaScript
+
+```javascript
+// Authenticate the user when they start playing
+async function authenticateUser(userId, authData) {
+  try {
+    await Gx402.authenticate(userId, authData);
+    console.log('User authenticated successfully');
+    
+    // Now you can use user-specific x402 features
+    return true;
+  } catch (error) {
+    console.error('Authentication failed:', error);
+    return false;
+  }
+}
+
+// Example usage
+const isAuthenticated = await authenticateUser('user-123', 'auth-token');
+```
+
+### Unity (C#)
+
+```csharp
+async void AuthenticateUser(string userId, string token)
+{
+    Gx402Manager.Authenticate(userId, token, (success, result) => {
+        if (success) {
+            Debug.Log($"User {userId} authenticated successfully");
+            OnUserAuthenticated();
+        } else {
+            Debug.LogError($"Authentication failed: {result.ErrorMessage}");
+        }
+    });
+}
+
+void OnUserAuthenticated()
+{
+    // Enable x402 features that require authentication
+    EnableAdvancedFeatures();
+}
+```
+
+## Step 4: Implement x402 Data Processing
+
+Now let's add x402 processing to your game data.
+
+### WebGL/JavaScript
+
+```javascript
+// Process game data with x402 functionality
+async function processGameData(gameEvent) {
+  try {
+    const x402Result = await Gx402.processX402Data({
+      event: gameEvent.type,
+      data: gameEvent.payload,
+      timestamp: Date.now(),
+      playerId: getCurrentPlayerId()
+    });
+    
+    // Apply x402 enhancements to your game
+    return applyX402Enhancements(gameEvent, x402Result);
+  } catch (error) {
+    console.error('x402 processing failed:', error);
+    // Fallback to normal game processing
+    return gameEvent.payload;
+  }
+}
+
+// Example: Process player movement
+async function processPlayerMovement(movementData) {
+  const x402EnhancedData = await processGameData({
+    type: 'player-move',
+    payload: movementData
+  });
+  
+  // Update player position with x402-enhanced data
+  updatePlayerPosition(x402EnhancedData);
+}
+```
+
+### Unity (C#)
+
+```csharp
+async void ProcessGameData(string eventType, object data)
+{
+    var gameData = new {
+        Event = eventType,
+        Data = data,
+        Timestamp = System.DateTime.UtcNow,
+        PlayerId = GetCurrentPlayerId()
+    };
+    
+    var result = await Gx402Manager.ProcessX402Data(gameData);
+    
+    // Apply x402 enhancements
+    ApplyX402Enhancements(eventType, result);
+}
+```
+
+## Step 5: Add Data Synchronization
+
+Enable real-time synchronization between players.
+
+### WebGL/JavaScript
+
+```javascript
+// Sync game state across all players
+async function syncGameState(stateKey, stateData) {
+  try {
+    await Gx402.sync(stateKey, {
+      ...stateData,
+      syncId: generateSyncId(),
+      timestamp: Date.now(),
+      playerId: getCurrentPlayerId()
+    });
+    
+    console.log(`Synced state: ${stateKey}`);
+  } catch (error) {
+    console.error('Sync failed:', error);
+  }
+}
+
+// Listen for updates from other players
+function setupSyncListeners() {
+  Gx402.subscribe('player-moves', (data) => {
+    if (data.playerId !== getCurrentPlayerId()) {
+      // Update other player's position
+      updateOtherPlayerPosition(data.playerId, data.position);
+    }
+  });
+  
+  Gx402.subscribe('game-events', (data) => {
+    // Handle other game events
+    processGameEvent(data);
+  });
+}
+
+// Example usage in game loop
+function update() {
+  // When player moves
+  if (playerMoved) {
+    syncGameState('player-moves', {
+      playerId: getCurrentPlayerId(),
+      position: playerPosition,
+      rotation: playerRotation
+    });
+  }
+}
+```
+
+## Step 6: Implement Error Handling
+
+Add robust error handling for production use.
+
+```javascript
+// Global error handler for Gx402 operations
+Gx402.on('error', (error) => {
+  console.error('Gx402 error occurred:', error);
+  
+  // Log to your analytics
+  logError(error);
+  
+  // Implement fallback behavior
+  switch (error.type) {
+    case 'NETWORK_ERROR':
+      handleNetworkError(error);
+      break;
+    case 'AUTH_ERROR':
+      reauthenticateUser();
+      break;
+    case 'SYNC_ERROR':
+      queueSyncOperation(error.operation);
+      break;
+    default:
+      console.warn('Unknown error type, continuing operation');
+  }
+});
+
+// Function to handle network errors
+function handleNetworkError(error) {
+  // Queue operations for retry when network is available
+  const offlineQueue = new Queue();
+  
+  // Listen for connection status
+  window.addEventListener('online', () => {
+    retryQueuedOperations();
+  });
+}
+
+// Function to retry queued operations
+async function retryQueuedOperations() {
+  while (!offlineQueue.isEmpty()) {
+    const operation = offlineQueue.dequeue();
+    try {
+      await operation();
+    } catch (error) {
+      // Re-queue if still failing
+      offlineQueue.enqueue(operation);
+    }
+  }
+}
+```
+
+## Step 7: Testing Your Integration
+
+### Test Scenarios
+
+1. **Basic Functionality**
+   - Initialize the SDK
+   - Process simple data through x402
+   - Verify authentication works
+
+2. **Sync Functionality**
+   - Multiple clients connecting
+   - Data synchronization between clients
+   - Offline/online transitions
+
+3. **Performance**
+   - SDK initialization time
+   - x402 processing overhead
+   - Memory usage
+
+### Debugging Tips
+
+```javascript
+// Enable detailed logging
+Gx402.configure({
+  debug: true,
+  logLevel: 'verbose',
+  captureMetrics: true
+});
+
+// Monitor performance
+const metrics = Gx402.getMetrics();
+console.log('SDK Performance:', {
+  avgProcessTime: metrics.processTime.avg,
+  syncSuccessRate: metrics.syncSuccessRate,
+  networkLatency: metrics.network.latency
+});
+```
+
+## Step 8: Production Setup
+
+When deploying to production:
+
+1. **Update Configuration**
+   ```javascript
+   const Gx402 = new Gx402SDK({
+     apiKey: process.env.Gx402_PROD_KEY, // Use environment variables
+     environment: 'production',
+     enableRealtimeSync: true,
+     debug: false // Important: disable debugging in production
+   });
+   ```
+
+2. **Security Considerations**
+   - Never hardcode API keys in client code
+   - Use environment variables or secure token management
+   - Implement proper access controls
+
+3. **Performance Optimization**
+   - Reduce debug logging
+   - Optimize sync frequency
+   - Implement smart caching
+
+## Troubleshooting
+
+### Common Issues
+
+**SDK Not Initializing**
+- Check your API key is valid
+- Verify network connectivity
+- Ensure correct environment configuration
+
+**Sync Not Working**
+- Confirm real-time sync is enabled
+- Check authentication status
+- Verify proper event listeners are set up
+
+**High Latency**
+- Optimize sync frequency
+- Batch multiple operations
+- Consider regional endpoints
+
+## Next Steps
+
+Now that you have the basic integration working:
+
+1. Explore advanced features in the [Features Documentation](/features)
+2. Check platform-specific guides in the [Platform Documentation](/platforms)
+3. Review the complete [API Reference](/api-reference)
+4. Join our [Community](/community) for support and updates
+
+## Complete Integration Example
+
+Here's a complete example showing all the pieces together:
+
+```javascript
+import { Gx402SDK } from '@Gx402/web-sdk';
+
+class GameIntegration {
+  constructor() {
+    this.Gx402 = null;
+    this.playerId = null;
+    this.isInitialized = false;
+  }
+  
+  async initialize(apiKey, playerId) {
+    try {
+      this.Gx402 = new Gx402SDK({
+        apiKey,
+        environment: 'production',
+        enableRealtimeSync: true,
+        debug: false
+      });
+      
+      await this.Gx402.init();
+      await this.Gx402.authenticate(playerId, this.generateAuthToken(playerId));
+      
+      this.playerId = playerId;
+      this.isInitialized = true;
+      
+      this.setupSyncListeners();
+      this.setupErrorHandlers();
+      
+      console.log('Game integration with Gx402 completed successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize game integration:', error);
+      return false;
+    }
+  }
+  
+  async processGameEvent(eventType, payload) {
+    if (!this.isInitialized) {
+      throw new Error('Game integration not initialized');
+    }
+    
+    const x402Result = await this.Gx402.processX402Data({
+      event: eventType,
+      data: payload,
+      timestamp: Date.now(),
+      playerId: this.playerId
+    });
+    
+    return x402Result;
+  }
+  
+  async syncGameState(key, data) {
+    if (!this.isInitialized) return;
+    
+    await this.Gx402.sync(key, {
+      ...data,
+      playerId: this.playerId,
+      timestamp: Date.now()
+    });
+  }
+  
+  setupSyncListeners() {
+    this.Gx402.subscribe('game-state', (data) => {
+      if (data.playerId !== this.playerId) {
+        this.applyRemoteGameState(data);
+      }
+    });
+  }
+  
+  setupErrorHandlers() {
+    this.Gx402.on('error', (error) => {
+      console.error('Gx402 error:', error);
+      // Implement error handling logic
+    });
+  }
+  
+  generateAuthToken(playerId) {
+    // Implement your token generation logic
+    return `token-for-${playerId}`;
+  }
+  
+  applyRemoteGameState(data) {
+    // Apply game state from other players
+    console.log('Applying remote game state:', data);
+  }
+}
+
+// Usage
+const gameIntegration = new GameIntegration();
+await gameIntegration.initialize('YOUR_API_KEY', 'player-123');
+```
+
+You now have a solid foundation for using the Gx402 SDK in your game!

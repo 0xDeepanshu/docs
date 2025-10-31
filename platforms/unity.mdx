@@ -1,0 +1,93 @@
+---
+title: "Unity Integration"
+description: "Integrate Gx402 SDK with Unity game engine"
+icon: "unity"
+---
+
+# Unity Integration
+
+The Gx402 SDK provides seamless integration with the Unity game engine, bringing all the power of x402 functionality to your Unity projects.
+
+## Installation
+
+To install the Gx402 SDK in your Unity project, you have two primary options:
+
+### Via Unity Package Manager (Git URL)
+
+1.  Open your Unity project.
+2.  Go to `Window` > `Package Manager`.
+3.  Click the `+` button in the top-left corner.
+4.  Select "Add package from git URL...".
+5.  Enter the Gx402 SDK repository URL: `https://github.com/Gx402/unity-sdk.git`.
+6.  Click "Add".
+
+### Via Unity Asset Store
+
+1.  Open the Unity Asset Store from within Unity or your web browser.
+2.  Search for "Gx402 Payment SDK".
+3.  Follow the instructions to download and import the package into your project.
+
+## Minimal Implementation Example
+
+Here's a basic example of how to integrate the Gx402 SDK into your Unity project to handle in-game purchases.
+
+```csharp
+using Gx402;
+using UnityEngine;
+
+public class GameStore : MonoBehaviour
+{
+    private Gx402Client client;
+
+    void Start()
+    {
+        client = new Gx402Client(
+            receiverAddress: "OxYourWalletAddress",
+            network: Network.Base,
+            facilitatorUrl: "https://api.Gx402.io"
+        );
+    }
+
+    public async void BuyItem(string itemId, decimal price)
+    {
+        try
+        {
+            var result = await client.Purchase(new PurchaseRequest
+            {
+                ItemId = itemId,
+                Price = price,
+                Currency = "USDC",
+                Metadata = new { userId = GetUserId() }
+            });
+
+            // Payment successful!
+            GrantItemToPlayer(itemId);
+            ShowNotification($"Purchased {itemId}!");
+        }
+        catch (Gx402Exception ex)
+        {
+            Debug.LogError($"Payment failed: {ex.Message}");
+            ShowErrorDialog(ex.UserFriendlyMessage);
+        }
+    }
+
+    // Placeholder methods - implement your actual game logic here
+    private string GetUserId() { return "player123"; }
+    private void GrantItemToPlayer(string itemId) { Debug.Log($"Granting {itemId} to player."); }
+    private void ShowNotification(string message) { Debug.Log($"Notification: {message}"); }
+    private void ShowErrorDialog(string message) { Debug.LogError($"Error Dialog: {message}"); }
+}
+```
+
+## Best Practices
+
+- Initialize the SDK as early as possible in your game
+- Always check for network connectivity before making API calls
+- Handle authentication errors gracefully
+- Use the Unity SDK's built-in logging for debugging
+
+## Resources
+
+- [Unity SDK API Reference](/api-reference/unity-sdk)
+- [Unity Example Project](https://github.com/Gx402/unity-examples)
+- [Troubleshooting Guide](/platforms/unity/troubleshooting)

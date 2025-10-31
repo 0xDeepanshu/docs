@@ -1,35 +1,681 @@
 ---
-title: 'Code blocks'
-description: 'Display inline code and code blocks'
-icon: 'code'
+title: "Code Examples and Samples"
+description: "Best practices for including code examples in Gx402 SDK documentation"
+icon: "code"
 ---
 
-## Inline code
+# Code Examples and Samples
 
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
+Learn how to create effective code examples for Gx402 SDK documentation that help developers implement features quickly and correctly.
 
+## Best Practices for Code Examples
+
+### Start with Complete Examples
+Always begin with a complete, runnable example rather than fragments:
+
+```javascript
+// Good: Complete initialization example
+import { Gx402SDK } from '@Gx402/web-sdk';
+
+// Complete setup with error handling
+const initializeGx402 = async () => {
+  try {
+    const Gx402 = new Gx402SDK({
+      apiKey: process.env.Gx402_API_KEY,
+      enableRealtimeSync: true,
+      debug: process.env.NODE_ENV !== 'production'
+    });
+    
+    await Gx402.init();
+    console.log('Gx402 SDK initialized successfully');
+    return Gx402;
+  } catch (error) {
+    console.error('Failed to initialize Gx402 SDK:', error);
+    throw error;
+  }
+};
 ```
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
+
+### Include Multiple Platforms
+When showing platform-specific functionality, provide examples for all relevant platforms:
+
+<Tabs>
+<TabItem value="javascript" label="JavaScript/WebGL">
+```javascript
+import { Gx402SDK } from '@Gx402/web-sdk';
+
+const Gx402 = new Gx402SDK({
+  apiKey: 'your-api-key'
+});
+
+await Gx402.init();
 ```
+</TabItem>
 
-## Code blocks
+<TabItem value="csharp" label="C# (Unity)">
+```csharp
+using Gx402;
+using UnityEngine;
 
-Use [fenced code blocks](https://www.markdownguide.org/extended-syntax/#fenced-code-blocks) by enclosing code in three backticks and follow the leading ticks with the programming language of your snippet to get syntax highlighting. Optionally, you can also write the name of your code after the programming language.
-
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
+public class Gx402Manager : MonoBehaviour
+{
+    void Start()
+    {
+        Gx402Manager.Initialize("your-api-key");
     }
 }
 ```
+</TabItem>
 
-````md
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+<TabItem value="cpp" label="C++ (Unreal)">
+```cpp
+#include "Gx402SDK.h"
+
+void AMyGameMode::StartPlay()
+{
+    Super::StartPlay();
+    
+    FGx402Config Config;
+    Config.ApiKey = TEXT("your-api-key");
+    
+    UGx402Manager::Initialize(Config);
 }
 ```
-````
+</TabItem>
+
+<TabItem value="swift" label="Swift (iOS)">
+```swift
+import Gx402SDK
+
+let config = Gx402Config(
+    apiKey: "your-api-key",
+    environment: .production
+);
+
+Gx402Manager.shared.initialize(with: config) { success, error in
+    if success {
+        print("SDK initialized successfully")
+    }
+};
+```
+</TabItem>
+</Tabs>
+
+## Common Code Example Patterns
+
+### 1. Initialization Patterns
+```javascript
+// Standard initialization with error handling
+const initializeGx402WithFallback = async () => {
+  try {
+    const config = {
+      apiKey: getApiKey(),
+      environment: getEnvironment(),
+      enableRealtimeSync: true
+    };
+    
+    const Gx402 = new Gx402SDK(config);
+    await Gx402.init();
+    
+    // Verify initialization
+    if (Gx402.isInitialized()) {
+      console.log('Gx402 ready!');
+      return Gx402;
+    } else {
+      throw new Error('SDK not properly initialized');
+    }
+  } catch (error) {
+    console.error('Initialization failed:', error);
+    return null;
+  }
+};
+```
+
+### 2. Authentication Examples
+```javascript
+// Complete authentication flow
+const authenticateUser = async (credentials) => {
+  try {
+    // Verify input
+    if (!credentials || !credentials.userId || !credentials.token) {
+      throw new Error('Invalid credentials provided');
+    }
+    
+    // Perform authentication
+    const authResult = await Gx402.authenticate(
+      credentials.userId, 
+      credentials.token
+    );
+    
+    if (authResult.success) {
+      console.log('User authenticated successfully');
+      storeAuthState(authResult);
+      return authResult;
+    } else {
+      throw new Error('Authentication failed');
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    throw error;
+  }
+};
+```
+
+### 3. Real-time Sync Examples
+```javascript
+// Complete sync example with subscription
+class GameStateSync {
+  constructor(Gx402) {
+    this.Gx402 = Gx402;
+    this.gameState = {};
+    this.playerId = null;
+  }
+  
+  async initialize(playerId) {
+    this.playerId = playerId;
+    
+    // Subscribe to game state updates
+    this.Gx402.subscribe('game-state', (data) => {
+      this.handleGameStateUpdate(data);
+    });
+    
+    // Load initial state
+    await this.loadInitialState();
+  }
+  
+  async handleGameStateUpdate(data) {
+    // Update local state
+    this.gameState = { ...data };
+    
+    // Update game UI
+    this.updateGameUI();
+  }
+  
+  async syncLocalState() {
+    if (!this.playerId) return;
+    
+    await this.Gx402.sync('game-state', {
+      ...this.gameState,
+      playerId: this.playerId,
+      timestamp: Date.now()
+    });
+  }
+  
+  async loadInitialState() {
+    try {
+      const queryResult = await this.Gx402.query('game-state', {
+        orderBy: { timestamp: 'desc' },
+        limit: 1
+      });
+      
+      if (queryResult.length > 0) {
+        this.gameState = { ...queryResult[0] };
+      }
+    } catch (error) {
+      console.error('Failed to load initial state:', error);
+    }
+  }
+}
+```
+
+## Error Handling Examples
+
+### Comprehensive Error Handling
+```javascript
+// Robust error handling with multiple strategies
+const safeGx402Operation = async (operation, options = {}) => {
+  const {
+    retries = 3,
+    backoff = 1000,
+    fallback = null,
+    onRetry = null
+  } = options;
+  
+  let attempts = 0;
+  
+  while (attempts < retries) {
+    try {
+      return await operation();
+    } catch (error) {
+      attempts++;
+      
+      // Log error with context
+      console.error(`Gx402 operation failed (attempt ${attempts}/${retries}):`, error);
+      
+      if (attempts >= retries) {
+        // Final failure - try fallback or propagate error
+        if (fallback) {
+          console.warn('Using fallback due to operation failure');
+          return typeof fallback === 'function' ? fallback(error) : fallback;
+        } else {
+          throw error;
+        }
+      }
+      
+      // Wait before retry with exponential backoff
+      if (onRetry) onRetry(attempts, error);
+      await new Promise(resolve => setTimeout(resolve, backoff * Math.pow(2, attempts - 1)));
+    }
+  }
+};
+
+// Usage example
+const result = await safeGx402Operation(
+  () => Gx402.processX402Data(gameData),
+  {
+    retries: 3,
+    fallback: () => ({ processed: false, fallbackData: gameData }),
+    onRetry: (attempt, error) => {
+      console.log(`Retrying operation, attempt ${attempt}`);
+    }
+  }
+);
+```
+
+### Specific Error Handling
+```javascript
+// Handle specific error types appropriately
+const handleGx402Error = (error) => {
+  switch (error.code) {
+    case 'AUTHENTICATION_FAILED':
+      // Redirect to login
+      redirectToLogin();
+      break;
+      
+    case 'NETWORK_ERROR':
+      // Queue for later sync
+      queueOperation();
+      showOfflineIndicator();
+      break;
+      
+    case 'RATE_LIMITED':
+      // Implement backoff
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      break;
+      
+    case 'INVALID_DATA':
+      // Show user-friendly error
+      showUserError('Invalid data provided');
+      break;
+      
+    default:
+      // Log unknown errors
+      logError(error);
+      showGenericError();
+  }
+};
+```
+
+## Performance Examples
+
+### Optimized Sync Patterns
+```javascript
+// Batch sync operations to improve performance
+class BatchSyncManager {
+  constructor(Gx402) {
+    this.Gx402 = Gx402;
+    this.syncQueue = [];
+    this.batchTimeout = null;
+    this.batchInterval = 100; // ms
+  }
+  
+  async queueSync(key, data) {
+    this.syncQueue.push({ key, data, timestamp: Date.now() });
+    
+    // Schedule batch sync
+    if (!this.batchTimeout) {
+      this.batchTimeout = setTimeout(() => this.executeBatchSync(), this.batchInterval);
+    }
+  }
+  
+  async executeBatchSync() {
+    if (this.syncQueue.length === 0) return;
+    
+    const batch = [...this.syncQueue];
+    this.syncQueue = [];
+    this.batchTimeout = null;
+    
+    try {
+      // Batch multiple sync operations
+      const batchData = batch.reduce((acc, item) => {
+        acc[item.key] = item.data;
+        return acc;
+      }, {});
+      
+      await this.Gx402.sync('batch', batchData);
+    } catch (error) {
+      console.error('Batch sync failed:', error);
+      // Requeue failed operations
+      this.syncQueue = [...batch, ...this.syncQueue];
+    }
+  }
+}
+```
+
+### Memory-Efficient Data Processing
+```javascript
+// Process large datasets efficiently
+const processLargeDataset = async (largeData, processor) => {
+  const CHUNK_SIZE = 100; // Process in chunks
+  const results = [];
+  
+  for (let i = 0; i < largeData.length; i += CHUNK_SIZE) {
+    const chunk = largeData.slice(i, i + CHUNK_SIZE);
+    
+    // Process chunk with x402
+    const chunkResults = await Promise.all(
+      chunk.map(item => 
+        Gx402.processX402Data(item)
+          .catch(error => {
+            console.error(`Failed to process item ${i}:`, error);
+            return null;
+          })
+      )
+    );
+    
+    results.push(...chunkResults.filter(result => result !== null));
+    
+    // Yield control to avoid blocking
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+  
+  return results;
+};
+```
+
+## Testing Examples
+
+### Unit Test Examples
+```javascript
+// Example of testing with mocks
+describe('GameStateSync', () => {
+  let mockGx402;
+  let gameStateSync;
+  
+  beforeEach(() => {
+    mockGx402 = {
+      subscribe: jest.fn(),
+      sync: jest.fn().mockResolvedValue({ success: true }),
+      query: jest.fn().mockResolvedValue([]),
+      authenticate: jest.fn().mockResolvedValue({ success: true })
+    };
+    
+    gameStateSync = new GameStateSync(mockGx402);
+  });
+  
+  test('should sync game state correctly', async () => {
+    await gameStateSync.initialize('player-123');
+    await gameStateSync.syncLocalState();
+    
+    expect(mockGx402.sync).toHaveBeenCalledWith(
+      'game-state',
+      expect.objectContaining({
+        playerId: 'player-123'
+      })
+    );
+  });
+});
+```
+
+### Integration Test Examples
+```javascript
+// Integration test example
+describe('Multiplayer Sync', () => {
+  test('game state syncs between two clients', async () => {
+    // Client A: Update game state
+    const clientA = await createGx402Client();
+    await clientA.sync('game-state', { players: 1 });
+    
+    // Client B: Subscribe and verify update
+    const clientB = await createGx402Client();
+    const receivedUpdates = [];
+    
+    clientB.subscribe('game-state', (data) => {
+      receivedUpdates.push(data);
+    });
+    
+    // Wait for sync
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    expect(receivedUpdates).toContainEqual({ players: 1 });
+  });
+});
+```
+
+## Security Examples
+
+### Secure Token Management
+```javascript
+// Secure token handling example
+class SecureTokenManager {
+  constructor(Gx402) {
+    this.Gx402 = Gx402;
+    this.token = null;
+  }
+  
+  async initialize() {
+    // Load token securely
+    this.token = await this.loadSecureToken();
+    
+    if (this.token) {
+      await this.validateAndSetToken();
+    }
+  }
+  
+  async loadSecureToken() {
+    // Use secure storage (platform-specific)
+    if (typeof window !== 'undefined') {
+      // Browser - use secure HTTP-only cookies or secure local storage
+      return window.localStorage.getItem('Gx402_token');
+    } else if (Platform.isMobile) {
+      // Mobile - use secure keychain/keystore
+      return await SecureStorage.get('Gx402_token');
+    }
+  }
+  
+  async validateAndSetToken() {
+    try {
+      // Validate token before use
+      const isValid = await this.Gx402.validateToken(this.token);
+      
+      if (isValid) {
+        await this.Gx402.setAuthToken(this.token);
+      } else {
+        await this.refreshToken();
+      }
+    } catch (error) {
+      console.error('Token validation failed:', error);
+      await this.refreshToken();
+    }
+  }
+  
+  async refreshToken() {
+    // Implement secure token refresh
+    const newToken = await this.performSecureRefresh();
+    this.token = newToken;
+    await this.saveSecureToken(newToken);
+    await this.Gx402.setAuthToken(newToken);
+  }
+}
+```
+
+## Complete Game Integration Example
+
+Here's a complete example of a simple game integrating with Gx402:
+
+```javascript
+// Complete game integration example
+class Gx402GameIntegration {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.Gx402 = null;
+    this.playerId = null;
+    this.gameState = {
+      score: 0,
+      level: 1,
+      position: { x: 0, y: 0 }
+    };
+    this.isInitialized = false;
+  }
+  
+  async initialize(playerId) {
+    try {
+      this.Gx402 = new Gx402SDK({
+        apiKey: this.apiKey,
+        enableRealtimeSync: true,
+        debug: process.env.NODE_ENV !== 'production'
+      });
+      
+      await this.Gx402.init();
+      await this.authenticatePlayer(playerId);
+      await this.setupSyncHandlers();
+      
+      this.playerId = playerId;
+      this.isInitialized = true;
+      
+      console.log('Game integration with Gx402 initialized successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize game integration:', error);
+      return false;
+    }
+  }
+  
+  async authenticatePlayer(playerId) {
+    const authResult = await this.Gx402.authenticate(playerId, this.generateToken(playerId));
+    if (!authResult.success) {
+      throw new Error('Player authentication failed');
+    }
+  }
+  
+  async setupSyncHandlers() {
+    // Subscribe to other players' positions
+    this.Gx402.subscribe('player-position', (data) => {
+      if (data.playerId !== this.playerId) {
+        this.updateOtherPlayerPosition(data);
+      }
+    });
+    
+    // Subscribe to game events
+    this.Gx402.subscribe('game-events', (data) => {
+      this.handleGameEvent(data);
+    });
+  }
+  
+  async updatePlayerScore(points) {
+    if (!this.isInitialized) return;
+    
+    this.gameState.score += points;
+    
+    // Process with x402
+    const processed = await this.Gx402.processX402Data({
+      action: 'score-update',
+      currentScore: this.gameState.score,
+      playerId: this.playerId
+    });
+    
+    this.gameState.score = processed.score || this.gameState.score;
+    
+    // Sync to other players
+    await this.Gx402.sync('player-state', {
+      playerId: this.playerId,
+      score: this.gameState.score,
+      timestamp: Date.now()
+    });
+  }
+  
+  async setPlayerPosition(x, y) {
+    if (!this.isInitialized) return;
+    
+    this.gameState.position = { x, y };
+    
+    // Sync position to other players
+    await this.Gx402.sync('player-position', {
+      playerId: this.playerId,
+      position: this.gameState.position,
+      timestamp: Date.now()
+    });
+  }
+  
+  generateToken(playerId) {
+    // Implement secure token generation
+    return `token-${playerId}-${Date.now()}`;
+  }
+  
+  updateOtherPlayerPosition(data) {
+    // Update UI with other player's position
+    console.log(`Player ${data.playerId} moved to`, data.position);
+  }
+  
+  handleGameEvent(data) {
+    console.log('Game event received:', data);
+  }
+}
+
+// Usage
+const gameIntegration = new Gx402GameIntegration('your-api-key');
+await gameIntegration.initialize('player-123');
+
+// Game loop integration
+function gameLoop() {
+  if (playerMoved) {
+    gameIntegration.setPlayerPosition(playerX, playerY);
+  }
+  
+  if (playerScored) {
+    gameIntegration.updatePlayerScore(pointsEarned);
+  }
+}
+```
+
+## Documentation Examples
+
+When writing documentation, use these patterns:
+
+### Before/After Comparison
+```javascript
+// Before: Basic data sync
+const oldSync = async (data) => {
+  await fetch('/api/sync', { 
+    method: 'POST', 
+    body: JSON.stringify(data) 
+  });
+};
+
+// After: With Gx402
+const betterSync = async (data) => {
+  return await Gx402.sync('game-data', data);
+};
+```
+
+### Progressive Enhancement
+Start with basic functionality and add Gx402 features:
+
+```javascript
+// Step 1: Basic game state
+const gameState = {
+  player: { x: 0, y: 0, health: 100 },
+  score: 0
+};
+
+// Step 2: Add simple sync
+const updateGameState = (newState) => {
+  Object.assign(gameState, newState);
+};
+
+// Step 3: Enhance with Gx402
+const updateGameStateWithGx402 = async (newState) => {
+  // Update local state immediately
+  Object.assign(gameState, newState);
+  
+  // Process through x402 for validation/enhancement
+  const processed = await Gx402.processX402Data(newState);
+  
+  // Sync across platforms
+  await Gx402.sync('game-state', processed);
+  
+  return processed;
+};
+```
+
+These examples provide a foundation for creating effective code examples that developers can easily adapt to their own projects.

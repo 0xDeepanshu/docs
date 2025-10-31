@@ -1,4 +1,42 @@
 ---
-title: 'Create Plant'
-openapi: 'POST /plants'
+title: "Create Payment"
+description: "Documentation for the Create Payment POST endpoint in Gx402 API"
 ---
+
+# Create Payment
+
+This endpoint allows you to initiate a new payment within the Gx402 system.
+
+### Endpoint
+```
+POST /payments
+```
+
+### Request Body
+
+```json
+{
+  "itemId": "string",
+  "price": "decimal",
+  "currency": "USDC",
+  "playerWallet": "0x...",
+  "developerWallet": "0x...",
+  "network": "base",
+  "metadata": {
+    // ...
+  }
+}
+```
+
+### Response
+
+```json
+{
+  "paymentId": "uuid",
+  "status": "pending",
+  "signatureRequired": true,
+  "signaturePayload": {
+    // ...
+  }
+}
+```

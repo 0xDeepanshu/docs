@@ -1,0 +1,77 @@
+---
+title: "Unreal Engine Integration"
+description: "Integrate Gx402 SDK with Unreal Engine"
+icon: "unreal"
+---
+
+# Unreal Engine Integration
+
+The Gx402 SDK provides native integration with Unreal Engine, allowing you to leverage x402 functionality in your Unreal projects with full C++ and Blueprint support.
+
+## Installation
+
+To install the Gx402 SDK in your Unreal Engine project, you have two primary options:
+
+### Download from Unreal Marketplace
+
+1.  Open the Unreal Engine Marketplace from within the Unreal Editor or your web browser.
+2.  Search for "Gx402 Payment SDK".
+3.  Follow the instructions to download and add the plugin to your project.
+
+### Clone Source
+
+1.  Open your terminal or command prompt.
+2.  Navigate to your project's `Plugins` directory (create it if it doesn't exist).
+3.  Clone the Gx402 Unreal SDK repository: `git clone https://github.com/Gx402/unreal-sdk.git`
+4.  Copy the cloned `Gx402-sdk` folder into your project's `Plugins` directory.
+5.  Restart the Unreal Editor and enable the plugin in `Edit` > `Plugins`.
+
+## Minimal Implementation Example (Blueprint)
+
+Here's a basic example of how to integrate the Gx402 SDK into your Unreal Engine project using Blueprints to handle in-game purchases.
+
+```blueprint
+[Begin Play]
+    ↓
+[Create Gx402 Client]
+    ↓
+    Receiver Address: OxYourAddress
+    Network: Base
+    ↓
+[On Button Click: Buy Sword]
+    ↓
+[Call: Gx402 Purchase (Async)]
+    ↓
+    Item ID: "legendary_sword"
+    Price: 2.50
+    Currency: USDC
+    ↓
+[On Success]  ←  [Grant Item]  ←  [Show Success UI]
+[On Failure]  ←  [Show Error UI]
+```
+
+## Supported Platforms
+
+The Unreal Engine integration supports all major platforms:
+- Windows
+- macOS
+- Linux
+- iOS
+- Android
+- PlayStation
+- Xbox
+- Nintendo Switch
+
+## Best Practices
+
+- Initialize the SDK early in your game lifecycle
+- Handle platform-specific considerations during deployment
+- Use Unreal's blueprint node system for non-programmer integration
+- Test thoroughly across all target platforms
+- Monitor SDK performance in profiling tools
+
+## Resources
+
+- [Unreal Engine SDK API Reference](/api-reference/unreal-sdk)
+- [Unreal Engine Example Project](https://github.com/Gx402/unreal-examples)
+- [Platform-Specific Setup](/platforms/unreal-engine/platforms)

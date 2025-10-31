@@ -1,4 +1,91 @@
 ---
-title: 'Delete Plant'
-openapi: 'DELETE /plants/{id}'
+title: "DELETE Endpoints"
+description: "Documentation for DELETE endpoints in Gx402 API"
 ---
+
+# DELETE Endpoints
+
+Documentation for DELETE endpoints in the Gx402 API.
+
+## Delete Player Data
+
+Remove a player and associated data from the system.
+
+### Endpoint
+```
+DELETE /v1/players/{playerId}
+```
+
+### Path Parameters
+- `playerId` (string, required): Unique identifier for the player to delete
+
+### Query Parameters
+- `preserveStats` (boolean, optional): Keep player statistics (default: false)
+
+### Request Example
+```javascript
+await Gx402.api.delete('/players/player-123', {
+  params: {
+    preserveStats: true
+  }
+});
+```
+
+### Response
+```json
+{
+  "deleted": true,
+  "id": "player-123",
+  "deletedAt": "2023-12-01T10:30:00Z"
+}
+```
+
+## Remove Sync Subscription
+
+Unsubscribe from real-time sync updates.
+
+### Endpoint
+```
+DELETE /v1/sync/subscriptions/{subscriptionId}
+```
+
+### Path Parameters
+- `subscriptionId` (string, required): Unique identifier for the subscription to remove
+
+### Request Example
+```javascript
+await Gx402.api.delete('/sync/subscriptions/sub-456');
+```
+
+### Response
+```json
+{
+  "unsubscribed": true,
+  "id": "sub-456"
+}
+```
+
+## Purge Game Data
+
+Remove game-related data, typically for cleanup purposes.
+
+### Endpoint
+```
+DELETE /v1/games/{gameId}/data
+```
+
+### Path Parameters
+- `gameId` (string, required): Unique identifier for the game
+
+### Query Parameters
+- `dataType` (string, optional): Specific type of data to delete (e.g., "state", "events", "logs")
+
+### Response
+```json
+{
+  "purged": true,
+  "gameId": "game-789",
+  "dataType": "state",
+  "count": 42
+}
+```

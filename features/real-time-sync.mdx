@@ -1,0 +1,31 @@
+---
+title: "Real-time Sync"
+description: "Synchronize game states across platforms with Gx402"
+icon: "sync"
+---
+
+# Real-time Sync
+
+The Gx402 SDK provides powerful real-time synchronization capabilities that work seamlessly across all supported platforms, ensuring consistent game experiences for players regardless of their platform.
+
+## Overview
+
+Real-time sync in Gx402 enables:
+- Cross-platform game state synchronization
+- Multiplayer game state management
+- Persistent data sync across sessions
+- Offline-first capabilities with automatic sync
+
+## Getting Started
+
+To enable real-time synchronization, configure the Gx402 SDK during initialization:
+
+```javascript
+// Enable real-time sync
+Gx402.configure({
+  enableRealtimeSync: true,
+  // Additional configuration options can be set here
+});
+```
+
+Once enabled, the SDK will automatically manage real-time data consistency across connected clients and platforms.

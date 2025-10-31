@@ -1,0 +1,54 @@
+---
+title: "Authentication"
+description: "Details on API authentication for the Gx402 SDK."
+---
+
+## API Key Authentication
+
+All API requests to the Gx402 SDK require authentication using an API key. This key identifies your application and grants access to the Gx402 services.
+
+To authenticate your requests, include your API key in the `X-Gx402-API-Key` header:
+
+```
+X-Gx402-API-Key: YOUR_API_KEY
+```
+
+## HMAC Signature Verification for Webhooks
+
+For enhanced security, Gx402 webhooks include an HMAC-SHA256 signature in the request header. This allows you to verify the authenticity and integrity of webhook payloads received by your application.
+
+To verify a webhook signature:
+
+1.  Retrieve the `signature` from the `X-Gx402-Signature` header of the incoming webhook request.
+2.  Reconstruct the signed payload by concatenating the timestamp (from `X-Gx402-Timestamp` header) and the raw request body.
+3.  Compute the HMAC-SHA256 hash of the reconstructed payload using your webhook secret as the key.
+4.  Compare your computed hash with the `signature` received in the header. If they match, the webhook is authentic.
+
+**Example (Conceptual):**
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, timestamp, secret) {
+  const signedPayload = `${timestamp}.${payload}`;
+  const expectedSignature = crypto.createHmac('sha256', secret)
+                                  .update(signedPayload)
+                                  .digest('hex');
+  return expectedSignature === signature;
+}
+
+// In your webhook handler:
+const webhookSecret = process.env.Gx402_WEBHOOK_SECRET;
+const signature = req.headers['x-Gx402-signature'];
+const timestamp = req.headers['x-Gx402-timestamp'];
+const rawBody = req.rawBody; // Get the raw request body
+
+if (verifyWebhookSignature(rawBody, signature, timestamp, webhookSecret)) {
+  // Process webhook event
+} else {
+  // Signature verification failed
+  res.status(403).send('Invalid signature');
+}
+```
+
+**Note:** Always use a secure, randomly generated secret for your webhooks and store it securely. The raw request body is crucial for signature verification; ensure your server framework does not parse the body before verification.

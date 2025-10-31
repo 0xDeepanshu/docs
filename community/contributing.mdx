@@ -1,0 +1,287 @@
+---
+title: "Contributing to Gx402"
+description: "How to contribute to the Gx402 SDK and documentation"
+icon: "code-branch"
+---
+
+# Contributing to Gx402
+
+We welcome contributions from the community! Whether you're fixing bugs, adding features, improving documentation, or creating examples, your help makes Gx402 better for everyone.
+
+## How to Contribute
+
+### 1. Report Issues
+
+If you find a bug or have a feature request:
+
+1. **Search existing issues** to avoid duplicates
+2. **Create a new issue** with:
+   - Clear title and description
+   - Steps to reproduce (for bugs)
+   - Expected vs actual behavior
+   - Platform and version information
+
+### 2. Contribute Code
+
+#### Prerequisites
+- Git and GitHub account
+- Node.js (for documentation and tools)
+- Development environment for your target platform
+- Understanding of the platform-specific SDK
+
+#### Getting Started
+
+1. **Fork the repository** you want to contribute to:
+   - [Gx402 Unity SDK](https://github.com/Gx402/unity-sdk)
+   - [Gx402 Unreal SDK](https://github.com/Gx402/unreal-sdk)
+   - [Gx402 Web SDK](https://github.com/Gx402/web-sdk)
+   - [Gx402 Mobile SDKs](https://github.com/Gx402/mobile-sdk)
+   - [Gx402 Documentation](https://github.com/Gx402/docs)
+
+2. **Clone your fork:**
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/repository-name.git
+   cd repository-name
+   ```
+
+3. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/descriptive-name
+   ```
+
+4. **Make your changes** following the coding standards
+
+5. **Test your changes** thoroughly
+
+6. **Commit your changes:**
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   ```
+
+7. **Push to your fork:**
+   ```bash
+   git push origin feature/descriptive-name
+   ```
+
+8. **Open a Pull Request** in the original repository
+
+### 3. Improve Documentation
+
+This documentation site is also open source! You can:
+
+- Fix typos and improve clarity
+- Add examples or tutorials
+- Update outdated information
+- Add missing platform-specific guides
+
+### 4. Create Examples
+
+Create and share complete example projects that demonstrate Gx402 features:
+
+1. Set up a new repository with your example
+2. Include comprehensive README with setup instructions
+3. Use best practices for your platform
+4. Share in our [Community Showcase](/community/showcase)
+
+## Development Guidelines
+
+### Code Standards
+
+#### JavaScript/TypeScript
+- Use ES6+ features appropriately
+- Follow Airbnb JavaScript style guide
+- Add JSDoc comments for public functions
+- Use TypeScript for type safety
+
+```javascript
+/**
+ * Process game data with x402 functionality
+ * @param {Object} data - Game data to process
+ * @param {Object} options - Processing options
+ * @returns {Promise<Object>} Processed result
+ */
+async function processX402Data(data, options = {}) {
+  // Implementation
+}
+```
+
+#### C# (Unity)
+- Follow Microsoft C# Coding Conventions
+- Use XML documentation comments
+- Implement proper error handling
+- Follow Unity best practices
+
+#### C++ (Unreal Engine)
+- Follow Unreal Engine coding standards
+- Use appropriate memory management
+- Include proper module definitions
+- Follow Epic Games naming conventions
+
+#### Swift (iOS)
+- Use Swift API Design Guidelines
+- Implement proper error handling
+- Follow Apple's Human Interface Guidelines
+- Use SwiftLint for style consistency
+
+#### Kotlin (Android)
+- Follow Kotlin Coding Conventions
+- Use Android KTX extensions where appropriate
+- Implement proper lifecycle management
+- Follow Material Design guidelines
+
+### Testing Requirements
+
+1. **Unit Tests**: Add tests for new functionality
+2. **Integration Tests**: Test SDK integration scenarios
+3. **Cross-Platform Tests**: Ensure consistency across platforms
+4. **Performance Tests**: Verify performance impact
+
+### Pull Request Requirements
+
+When submitting a pull request:
+
+- **Title**: Clear and descriptive
+- **Description**: 
+  - What changes are made
+  - Why changes are needed
+  - How changes were tested
+- **Code Quality**: Follow style guidelines
+- **Documentation**: Update relevant docs
+- **Tests**: Include appropriate tests
+- **Breaking Changes**: Clearly note if applicable
+
+## Documentation Contributions
+
+### Content Guidelines
+
+- **Clear and concise**: Use simple language
+- **Well-structured**: Follow existing patterns
+- **Accurate**: Test code examples
+- **Complete**: Include all necessary information
+- **Platform-specific**: Note differences between platforms
+
+### Writing Style
+
+- Use active voice where possible
+- Include examples for each new concept
+- Use consistent terminology
+- Organize content logically
+- Include relevant links
+
+### Documentation Structure
+
+```md
+---
+title: "Page Title"
+description: "Brief description of the page content"
+icon: "icon-name" // Optional
+---
+
+# Main Topic
+
+Content goes here...
+
+## Section 1
+
+### Subsection
+
+Content...
+
+## Section 2
+
+Code examples:
+\`\`\`javascript
+// Code example
+const result = Gx402.example();
+\`\`\`
+
+```
+
+## Community Standards
+
+### Code of Conduct
+
+- Be respectful and inclusive
+- Provide constructive feedback
+- Welcome newcomers
+- Focus on technical quality
+- Collaborate effectively
+
+### Support Others
+
+- Answer questions in issues
+- Review pull requests
+- Share knowledge and expertise
+- Help maintain documentation
+- Contribute to community discussions
+
+## Areas Needing Help
+
+### Beginner Friendly Issues
+
+Look for issues tagged with:
+- `good first issue`
+- `docs`
+- `typo`
+- `example`
+
+### Major Areas of Focus
+
+1. **Platform Support**
+   - New platform integrations
+   - Platform-specific optimizations
+   - Cross-platform consistency
+
+2. **Documentation**
+   - API documentation
+   - Tutorials and guides
+   - Platform-specific docs
+   - Migration guides
+
+3. **Examples and Demos**
+   - Complete example projects
+   - Feature-specific examples
+   - Cross-platform demonstrations
+
+4. **Testing and Quality**
+   - Additional test coverage
+   - Performance improvements
+   - Security enhancements
+
+5. **Developer Experience**
+   - Tooling improvements
+   - Error messages
+   - Debugging tools
+   - Setup workflows
+
+## Getting Help
+
+### When Contributing
+
+- Check the existing documentation
+- Look at similar implementations
+- Ask questions in pull requests
+- Join our [Discord community](https://discord.gg/Gx402) for real-time help
+
+### For Documentation
+
+- Read the [Documentation Guide](/essentials/markdown)
+- Examine existing pages for structure
+- Test code examples locally
+- Use `mint dev` to preview changes
+
+## Recognition
+
+Contributors are recognized in:
+
+- Repository contributor lists
+- Release notes
+- Community showcase
+- Special contributor badges
+
+## Questions?
+
+Not sure where to start? Join our [Discord community](https://discord.gg/Gx402) and we'll help you find a way to contribute that matches your skills and interests.
+
+Thank you for helping make Gx402 better for everyone!

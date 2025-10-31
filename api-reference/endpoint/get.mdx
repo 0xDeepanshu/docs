@@ -1,4 +1,25 @@
 ---
-title: 'Get Plants'
-openapi: 'GET /plants'
+title: "Verify Payment"
+description: "Documentation for the Verify Payment GET endpoint in Gx402 API"
 ---
+
+# Verify Payment
+
+This endpoint allows you to verify the status of a payment within the Gx402 system.
+
+### Endpoint
+```
+GET /payments/{paymentId}
+```
+
+### Response
+
+```json
+{
+  "paymentId": "uuid",
+  "status": "completed",
+  "txHash": "0x...",
+  "blockNumber": 12345,
+  "timestamp": "2026-01-15T10:30:00Z"
+}
+```
