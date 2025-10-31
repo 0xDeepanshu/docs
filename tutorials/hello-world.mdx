@@ -4,100 +4,45 @@ description: "Your first Gx402-powered game"
 icon: "star"
 ---
 
+<Card
+  title="🚧 Coming Soon"
+  icon="construction"
+  color="yellow"
+>
+  This tutorial is part of the **early developer preview** for Gx402.  
+  The SDK and its purchase functionality are still in active development — expect updates, new APIs, and improved stability soon.
+</Card>
 # Hello World with Gx402
 
-In this tutorial, you'll create your first application using the Gx402 SDK. We'll build a simple game that demonstrates basic x402 functionality.
+In this quick tutorial, you'll create your **first application using the Gx402 SDK**.  
+We’ll build a simple “game” that demonstrates the core idea behind **x402-powered in-game purchases**.
+
+
+---
 
 ## What You'll Build
 
-A simple web page with a button that triggers an in-game purchase using the Gx402 SDK.
+A small web page with a single button that lets players **buy a Legendary Sword** using **Gx402 payment functionality**.  
+This example focuses on the **core purchase flow**, keeping things as minimal as possible.
+
+---
 
 ## Prerequisites
 
-*   Basic knowledge of JavaScript and HTML.
-*   Node.js and npm (for installing the Gx402 SDK).
-*   Your Gx402 API key (optional for this basic example, but good practice).
+Before you start, make sure you have:
+
+* 🧠 Basic knowledge of **JavaScript** and **HTML**
+* 💻 **Node.js** and **npm** installed
+* 🔑 (Optional) Your **Gx402 API key** from the [Gx402 Dashboard](https://Gx402.com)
+
+---
 
 ## Step 1: Set Up Your Project
 
-First, create a new directory and initialize a project:
+Let’s start fresh.
 
 ```bash
 mkdir Gx402-purchase-example
 cd Gx402-purchase-example
 npm init -y
 npm install @Gx402/sdk
-```
-
-Create an `index.html` file with a button to trigger the purchase:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Gx402 Purchase Example</title>
-</head>
-<body>
-    <h1>Buy a Legendary Sword!</h1>
-    <button id="buyButton">Buy Legendary Sword (0.50 USDC)</button>
-    <p id="status">Click the button to make a purchase.</p>
-    
-    <script src="main.js"></script>
-</body>
-</html>
-```
-
-## Step 2: Initialize the SDK
-
-Create a `main.js` file and initialize the Gx402 SDK:
-
-```javascript
-import { Gx402Client } from '@Gx402/sdk';
-
-const Gx402 = new Gx402Client({
-    receiverAddress: 'OxYourWalletAddress', // Replace with your game's wallet address
-    network: 'base',
-    // Other configurations like facilitatorUrl can be added here
-});
-
-const buyButton = document.getElementById('buyButton');
-const statusElement = document.getElementById('status');
-
-statusElement.textContent = 'SDK Initialized. Ready to purchase.';
-```
-
-## Step 3: Implement Basic Purchase Functionality
-
-Add an event listener to the buy button to trigger the `Gx402.purchase` function:
-
-```javascript
-buyButton.addEventListener('click', async () => {
-    statusElement.textContent = 'Processing purchase...';
-    try {
-        const tx = await Gx402.purchase({
-            itemId: "legendary_sword",
-            price: "0.50", // $0.50 USDC
-            currency: "USDC",
-            metadata: { userId: "player123", sessionId: "abc" }
-        });
-        statusElement.textContent = `Purchase successful! Transaction Hash: ${tx.hash}`;
-        console.log('Purchase successful:', tx);
-    } catch (error) {
-        statusElement.textContent = `Purchase failed: ${error.message}`;
-        console.error('Purchase failed:', error);
-    }
-});
-```
-
-## What You've Learned
-
-In this tutorial, you've learned how to:
-*   Set up a basic web project.
-*   Initialize the Gx402 SDK.
-*   Implement a simple in-game purchase using `Gx402.purchase`.
-
-## Next Steps
-
-*   Explore the [Platform Guides](/platforms) for detailed platform-specific instructions.
-*   Check out the [API Reference](/api-reference) for complete method documentation.
-*   Join the [Community](/community) to connect with other developers.
