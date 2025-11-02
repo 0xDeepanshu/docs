@@ -1,0 +1,97 @@
+---
+title: "Quick Start"
+description: "This page shows the fastest path to a working Gx402 payment: create a payment session, sign it with a wallet, and confirm it using the backend."
+---
+
+## Prerequisites
+- A developer account / credentials for **x402** (you must obtain these from the x402 provider).  
+- A wallet for client-side signing (Phantom, WalletConnect, etc.).  
+- Node.js for the backend example or the matching engine (Unity/Unreal) for platform examples.
+<Note>
+Our examples use placeholder keys and config. Replace those with your x402 credentials and keep them server-side.
+</Note>
+## Quick flow (5 steps — same for all platforms)
+1. **Create payment session** — client calls your backend (`POST /create-payment`). Backend builds payload and (optionally) calls x402 create API.  
+2. **Return signable payload** — backend returns `paymentId` + `payload` to the client.  
+3. **User signs** — client prompts wallet (WalletConnect / MetaMask / mobile wallet) to sign the `payload`.  
+4. **Confirm** — client sends `signature` + `paymentId` to your backend (`POST /confirm-payment`). Backend verifies signature then calls x402 confirm/finalize.  
+5. **Finalize + webhook** — x402 or your backend sends final status (webhook); update UI, grant item, log txHash.
+
+> Note: this is the *common x402 flow* — Gx402 adds deterministic payload shapes, engine-native patterns, and middleware examples (idempotency, webhook verification, relayer support).
+
+---
+
+## Express server middleware (concept + example)
+This is the core middleware pattern we include in templates. Replace `X402_*` placeholders with credentials from your x402 provider.
+
+
+
+### `server.js` (Node + Express — simplified)
+```js
+// server.js (concept)
+import express from 'express';
+import fetch from 'node-fetch'; // or native fetch
+import crypto from 'crypto';
+import { ethers } from 'ethers'; // for signature verification
+
+const app = express();
+app.use(express.json());
+
+// create-payment: build payload and optionally call x402 create endpoint
+app.post('/create-payment', async (req, res) => {
+  const { itemId, amount, userAddress } = req.body;
+  const paymentId = `pay_${Date.now()}`; // your order id logic
+  // Build deterministic payload (example)
+  const payload = JSON.stringify({
+    paymentId,
+    itemId,
+    amount,
+    timestamp: Date.now(),
+    chainId: 1
+  });
+
+  // Optionally call x402 to register session (pseudo)
+  // await fetch(`${process.env.X402_API_BASE}/create`, { method:'POST', headers:{'Authorization':`Bearer ${process.env.X402_API_KEY}`}, body: JSON.stringify({ paymentId, amount }) });
+
+  // Store paymentSession locally (DB/Redis) with paymentId, payload, userAddress, status=pending
+  res.json({ paymentId, payload });
+});
+
+// confirm-payment: verify signature then call x402 confirm/finalize
+app.post('/confirm-payment', async (req, res) => {
+  const { paymentId, signature } = req.body;
+  // load session by paymentId from DB -> session.payload, session.userAddress
+  const session = /* loadSession(paymentId) */;
+  if (!session) return res.status(404).json({ error: 'not found' });
+
+  // Verify signature (EIP-191 simple example). Use EIP-712 if your payload uses typed data.
+  const signer = ethers.utils.verifyMessage(session.payload, signature);
+  if (signer.toLowerCase() !== session.userAddress.toLowerCase()) {
+    return res.status(400).json({ error: 'invalid signature' });
+  }
+
+  // Idempotency: check if already finalized
+  if (session.status === 'finalized') return res.json({ status: 'already_finalized' });
+
+  // Call x402 confirm/finalize endpoint (pseudo)
+  // const confirmRes = await fetch(`${process.env.X402_API_BASE}/confirm`, { method:'POST', headers:{'Authorization':`Bearer ${process.env.X402_API_KEY}`}, body: JSON.stringify({ paymentId, signature })});
+  // const confirmBody = await confirmRes.json();
+
+  // Update session.status and save txHash if present
+  // session.status = 'finalized'; session.txHash = confirmBody.txHash; saveSession(session);
+
+  res.json({ status: 'finalized', txHash: 'tx_hash_placeholder' });
+});
+
+// Simple webhook verification (x402 -> your /webhook)
+app.post('/webhook', (req, res) => {
+  const sig = req.headers['x-x402-signature'] || '';
+  const expected = crypto.createHmac('sha256', process.env.WEBHOOK_SECRET).update(JSON.stringify(req.body)).digest('hex');
+  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    return res.status(401).end();
+  }
+  // process webhook (payment confirmed/refunded)
+  res.json({ received: true });
+});
+
+app.listen(3000);

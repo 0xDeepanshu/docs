@@ -1,0 +1,32 @@
+---
+title: "Backend overview"
+description: "High-level backend role for x402 and how Gx402 middleware ties platforms together."
+---
+
+# Backend overview
+
+As a developer you should think of the backend as the single source of truth for payments. With x402 the provider handles actual transaction execution (on-chain or relayed), but your backend is where you:
+
+- build and store `paymentSession` objects (paymentId, item, amount, user),
+- produce the signable `payload` that clients must sign,
+- verify signatures the client returns,
+- call x402 endpoints to finalize a payment,
+- process webhooks, and
+- grant game items / update order state.
+
+Gx402's approach: we provide **middleware blueprints** and opinionated server patterns (Express examples in the repo) so every platform (Unity, Unreal, WebGL, Telegram, Farcaster, Mobile) talks the same language to your backend. That reduces cross-platform bugs and ensures consistent auditing.
+
+## Responsibilities (server-side)
+- **Session lifecycle**: create → pending → finalized/failed.  
+- **Signature verification**: check that the signature matches the expected wallet address.  
+- **Idempotency & replay safety**: prevent double fulfillment.  
+- **x402 integration**: call x402 create/confirm endpoints when appropriate.  
+- **Webhooks**: verify and reconcile async events from x402.  
+- **Auditing**: persist `paymentId`, `orderId`, `txHash`, timestamps, and user ids.
+
+## Quick model for you
+Platform (Unity/Web/Unreal) → Middleware  → Your Backend (paymentSession, verify) → x402 API
+
+
+> Tip: keep the server-side logic intentionally simple: build a deterministic payload, persist session state, verify signatures, call x402, then respond. Complexity belongs in the server.
+

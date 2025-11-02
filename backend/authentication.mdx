@@ -1,0 +1,31 @@
+---
+title: "Authentication"
+description: "How to authenticate clients, secure server-to-provider calls, and verify wallet signatures."
+---
+
+# Authentication
+
+
+There are two distinct authentication concerns:
+
+1. **Gx402 Server ↔ x402 provider** (machine-to-machine)
+2. **Client (player wallet) ↔ Middleware** (signature-based proof of ownership)
+
+We keep credentials and secret tokens strictly on the server. Clients never hold provider secrets.
+
+## Server ↔ x402 provider
+- Use the API key or OAuth scheme the x402 provider gives you.  
+- Store provider credentials in environment variables or a secret manager (DO NOT commit them).  
+- Protect server endpoints that call x402 with your own authorization (API tokens, JWTs, or internal network rules).
+
+
+
+When making a call:
+```js
+await fetch(`${X402_API_BASE}/payments`, {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${process.env.X402_API_KEY}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+});
+
+node example:

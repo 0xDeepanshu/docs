@@ -1,0 +1,50 @@
+---
+title: "Core Concepts"
+description: "This page explains the key terms used across our examples. Everything here assumes you are using **x402** directly; Gx402 examples show how to structure server middleware and client flows."
+---
+
+
+## Key terms
+
+- **Payment Session / paymentId**  
+  A temporary record in your server that tracks a requested purchase (amount, item, user). You create this locally and include data x402 expects.
+
+- **Payload**  
+  The structured message (payment details + metadata) that the user must sign with their wallet. Your server builds this according to x402 requirements.
+
+- **Signature**  
+  A cryptographic signature the user's wallet produces over the `payload`. Your server must verify this signature before calling x402 confirm/finalize endpoints.
+
+- **OrderId**  
+  Your internal identifier for bookkeeping. Map payment sessions to orderIds for auditing.
+
+- **Webhook**  
+  Asynchronous notification from the x402 provider (or your own service) about payment state changes. Verify webhook authenticity using whatever secrets or signatures x402 provides.
+
+- **Idempotency Key**  
+  Token used to avoid duplicate processing on retries. Use for `create` and `confirm` server calls.
+
+- **TxHash**  
+  Transaction hash returned if the payment involves an on-chain transaction. Track this for receipts and troubleshooting.
+
+## Common payment lifecycle (example)
+1. Client calls your backend `POST /create-payment`. Backend creates `paymentSession` and calls x402 create API (or formats payload for the client).  
+2. Backend returns `paymentId` + signing `payload` to the client.  
+3. Client requests wallet signature (`signature`) and sends it to your backend `POST /confirm-payment`.  
+4. Backend verifies `signature`. If valid, it calls x402 confirm/finalize endpoint (or submits an on-chain tx) and stores the outcome.  
+5. x402 or your backend may send a `webhook` to confirm final status. Update order state and notify client.
+
+## Security & best practices
+- Keep x402 keys and any secret server-side. Examples show placeholders — replace with your secrets.  
+- Always verify wallet signatures server-side.  
+- Use idempotency keys to make endpoint retries safe.  
+- Log `paymentId`, `orderId`, and `txHash` for traceability.  
+- Test thoroughly on the x402 test environment (if available).
+
+## Diagram suggestion
+`Client (Game) -> Your Backend (paymentSession, verify signature) -> x402 (create/confirm) -> Blockchain/Relayer -> Webhook -> Your Backend -> Client`
+
+---
+<Note>
+These documents and examples assume direct x402 usage. If/when we provide an SDK or packaged client, we will add clear migration guides and optional SDK examples. For now, the goal is practical, transparent examples you can adapt quickly.
+</Note>

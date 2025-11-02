@@ -1,0 +1,111 @@
+---
+title: "Architecture"
+description: "Learn how the Gx402 architecture connects x402 payments across Unity, Unreal, WebGL, and more using middleware and backend servers."
+---
+
+# Architecture Overview
+
+Gx402 acts as a **unified payment integration layer** built on top of **x402** — designed to bring seamless Web3 payments into **game engines and web apps** like Unity, Unreal, WebGL, Telegram Mini Apps, and Farcaster Mini Apps.
+
+Instead of building a new SDK, Gx402 currently uses **existing x402 SDKs** and connects them through a **shared backend** and **middleware layer**.  
+This ensures consistent payments, authentication, and transaction handling across every platform.
+
+---
+
+## Core Components
+
+### 1. Platform Layer
+Each platform (Unity, Unreal, WebGL, Telegram, etc.) integrates the x402 payment logic using custom wrappers or scripts.  
+These wrappers handle:
+
+- Player authentication  
+- In-game purchases or bets  
+- Sending transaction requests to middleware  
+
+---
+
+### 2. Middleware Layer
+A lightweight service that connects platform clients to the Gx402 backend.  
+It helps handle:
+
+- Platform-specific API differences  
+- Request normalization  
+- Security checks before server calls  
+
+> Example: Unity and WebGL both send payment intents to `/api/payments/initiate`, which the middleware reformats before passing to the server.
+
+---
+
+### 3. Gx402 Server
+Your **main Express.js backend** where:
+
+- Payment requests are validated  
+- User sessions are managed  
+- Calls are made to the **x402 API**  
+- Transactions are finalized and confirmed  
+
+This is where you can easily plug in logging, analytics, or game-specific rules.
+
+---
+
+### 4. x402 API
+The foundation of all payment logic.  
+It handles:
+
+- Smart contract interactions  
+- Token transfers  
+- Receipt validation on-chain  
+
+Gx402 relies on x402 APIs for actual transaction execution while abstracting all the complexity away from game developers.
+
+---
+
+### 5. Blockchain Layer
+Finally, the blockchain network (e.g., Solana, Base, or Polygon) records every transaction initiated through x402.  
+You don’t need to interact with it directly — Gx402 handles all the bridging and wallet logic for you.
+
+---
+
+## Example Flow
+
+1. Player triggers a purchase in Unity (e.g., buys a game pass).  
+2. Unity SDK wrapper sends a request → **Middleware**.  
+3. Middleware validates and sends it to the **Gx402 Server**.  
+4. Server processes and forwards to **x402 API**.  
+5. x402 API finalizes the payment on-chain.  
+6. Confirmation flows back through the same layers to the game.
+
+---
+
+##  Key Difference from x402
+
+| Feature | x402 | Gx402 |
+|----------|------|-------|
+| SDK Type | Direct integration SDK | Middleware + Server bridge |
+| Platform Coverage | Mostly web-based | Game engines + mini apps |
+| Payment Flow | App → x402 → Blockchain | Platform → Middleware → Server → x402 → Blockchain |
+| Customization | Limited | Fully customizable middleware and server logic |
+| Deployment | Developer handles | Gx402 handles backend |
+
+---
+
+## Future Plans
+
+- Native Gx402 SDKs (`import { gx402 } from "gx402";`)  
+- Developer dashboard for payment tracking  
+- Custom tokens and NFTs integration  
+- Webhooks and realtime event streams  
+
+---
+
+<figure>
+  <img
+    src="/images/map.png"
+    alt="Gx402 Architecture Diagram"
+    width="800px"
+    height='800px'
+  />
+  <figcaption>
+    Gx402 architecture showing platform integrations, middleware, server, and x402 API flow.
+  </figcaption>
+</figure>

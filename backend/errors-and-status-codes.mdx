@@ -1,0 +1,32 @@
+---
+title: "Errors and status codes"
+description: "Common HTTP error responses, provider error mapping, and best practices for returning structured errors."
+---
+
+# Errors and status codes
+
+
+Return clear, machine-readable errors from your backend so clients can react properly. Below is a small canonical set we use in Gx402 templates.
+
+## HTTP status conventions
+- `200 OK` — success (with JSON payload).  
+- `201 Created` — resource created (optional).  
+- `400 Bad Request` — client sent invalid data (missing fields, malformed payload).  
+- `401 Unauthorized` — signature or webhook verification failed.  
+- `403 Forbidden` — client lacks permission.  
+- `404 Not Found` — paymentId/session missing.  
+- `409 Conflict` — idempotency conflict or already-finalized.  
+- `422 Unprocessable Entity` — semantic validation failed (e.g., expired payload).  
+- `429 Too Many Requests` — rate limiting.  
+- `500 Internal Server Error` — unexpected server error (log and retry).
+
+## Example error response shape
+```json
+{
+  "error": {
+    "code": "invalid_signature",
+    "message": "Signature does not match expected address",
+    "details": { "expectedAddress": "0xabc...", "receivedAddress": "0xdef..." }
+  }
+}
+> Note: We will be adding changes to example error response shape for now we are just using x402 response shape!

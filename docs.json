@@ -16,12 +16,13 @@
           {
             "group": "Overview",
             "pages": [
-              "index",
-              "quickstart",
-              "what-is-Gx402",
-              "why-Gx402",
-              "pricing"
-            ]
+        "overview",
+        "quick-start",
+        "what-is-gx402",
+        "installation",
+        "architecture",
+        "core-concepts"
+      ]
           },
           {
             "group": "Platform Guides",
@@ -33,7 +34,18 @@
               "platforms/farcaster",
               "platforms/mobile"
             ]
-          }
+          },
+           {
+      "group": "Backend & API",
+      "pages": [
+        "backend/backend-overview",
+        "backend/authentication",
+        "backend/payment-flow",
+        "backend/webhooks",
+        "backend/mock",
+        "backend/errors-and-status-codes"
+      ]
+    }
         ]
       },
       {
@@ -106,7 +118,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/Gx402/Gx402-sdk",
+          "href": "https://github.com/0xDeepanshu/docs",
           "icon": "github"
         },
         {
@@ -118,8 +130,8 @@
     }
   },
   "logo": {
-    "light": "/logo/LOGO2.png",
-    "dark": "/logo/LOGO_T1.png"
+    "light": "/logo/dark.svg",
+    "dark": "/logo/light.svg"
   },
   "navbar": {
     "links": [
@@ -148,9 +160,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/Gx402",
-      "github": "https://github.com/Gx402",
-      "linkedin": "https://linkedin.com/company/Gx402"
+      "x": "https://x.com/gx4O2",
+      "github": "https://github.com/0xDeepanshu/docs"
+    
     }
   }
 }

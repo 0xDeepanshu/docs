@@ -1,93 +1,45 @@
 ---
 title: "Unity Integration"
-description: "Integrate Gx402 SDK with Unity game engine"
-icon: "unity"
+description: "How to integrate x402 payments in Unity using Gx402 middleware patterns."
 ---
 
 # Unity Integration
+Gx402 shows how to integrate **x402** payments into Unity projects using engine-native UI and wallet connectors (WalletConnect, browser wallets for WebGL). We provide example Unity scripts, a test scene, and an Express middleware example to handle server-side verification and x402 calls.
 
-The Gx402 SDK provides seamless integration with the Unity game engine, bringing all the power of x402 functionality to your Unity projects.
+---
 
-## Installation
+## Prerequisites
+- Unity 2020.3 LTS or newer (2021+ recommended)  
+- A WalletConnect plugin for Unity (or a compatible wallet bridge) for standalone builds  
+- Phantom or browser wallet for WebGL builds  
+- A running Express backend following the Gx402 middleware pattern
 
-To install the Gx402 SDK in your Unity project, you have two primary options:
+---
 
-### Via Unity Package Manager (Git URL)
+## High-level flow
+1. Player taps **Buy** in Unity.  
+2. Unity calls your middleware `/create-payment`. Backend builds the signable `payload` (and optionally registers with x402).  
+3. Unity launches wallet flow (WalletConnect or browser). User signs `payload`.  
+4. Unity posts `signature` to `/confirm-payment`. Backend verifies signature and calls x402 confirm/finalize.  
+5. Backend responds and/or webhook notifies final status. Unity grants the item.
 
-1.  Open your Unity project.
-2.  Go to `Window` > `Package Manager`.
-3.  Click the `+` button in the top-left corner.
-4.  Select "Add package from git URL...".
-5.  Enter the Gx402 SDK repository URL: `https://github.com/Gx402/unity-sdk.git`.
-6.  Click "Add".
+---
 
-### Via Unity Asset Store
-
-1.  Open the Unity Asset Store from within Unity or your web browser.
-2.  Search for "Gx402 Payment SDK".
-3.  Follow the instructions to download and import the package into your project.
-
-## Minimal Implementation Example
-
-Here's a basic example of how to integrate the Gx402 SDK into your Unity project to handle in-game purchases.
-
+## Unity pseudocode (C#)
 ```csharp
-using Gx402;
-using UnityEngine;
+// Unity - simple async flow (concept)
+async Task StartPurchase(string itemId) {
+  var createRes = await HttpClient.PostJsonAsync("/create-payment", new { itemId, playerAddress });
+  string payload = createRes.payload;
+  string paymentId = createRes.paymentId;
 
-public class GameStore : MonoBehaviour
-{
-    private Gx402Client client;
+  // Use WalletConnect plugin to sign
+  string signature = await WalletConnect.SignMessage(payload);
 
-    void Start()
-    {
-        client = new Gx402Client(
-            receiverAddress: "OxYourWalletAddress",
-            network: Network.Base,
-            facilitatorUrl: "https://api.Gx402.io"
-        );
-    }
-
-    public async void BuyItem(string itemId, decimal price)
-    {
-        try
-        {
-            var result = await client.Purchase(new PurchaseRequest
-            {
-                ItemId = itemId,
-                Price = price,
-                Currency = "USDC",
-                Metadata = new { userId = GetUserId() }
-            });
-
-            // Payment successful!
-            GrantItemToPlayer(itemId);
-            ShowNotification($"Purchased {itemId}!");
-        }
-        catch (Gx402Exception ex)
-        {
-            Debug.LogError($"Payment failed: {ex.Message}");
-            ShowErrorDialog(ex.UserFriendlyMessage);
-        }
-    }
-
-    // Placeholder methods - implement your actual game logic here
-    private string GetUserId() { return "player123"; }
-    private void GrantItemToPlayer(string itemId) { Debug.Log($"Granting {itemId} to player."); }
-    private void ShowNotification(string message) { Debug.Log($"Notification: {message}"); }
-    private void ShowErrorDialog(string message) { Debug.LogError($"Error Dialog: {message}"); }
+  var confirmRes = await HttpClient.PostJsonAsync("/confirm-payment", new { paymentId, signature });
+  if (confirmRes.status == "finalized") {
+    GrantItem(itemId);
+  } else {
+    ShowError(confirmRes.error || "Payment failed");
+  }
 }
-```
-
-## Best Practices
-
-- Initialize the SDK as early as possible in your game
-- Always check for network connectivity before making API calls
-- Handle authentication errors gracefully
-- Use the Unity SDK's built-in logging for debugging
-
-## Resources
-
-- [Unity SDK API Reference](/api-reference/unity-sdk)
-- [Unity Example Project](https://github.com/Gx402/unity-examples)
-- [Troubleshooting Guide](/platforms/unity/troubleshooting)

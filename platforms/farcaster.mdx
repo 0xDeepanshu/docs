@@ -1,70 +1,25 @@
 ---
-title: "Farcaster Integration"
-description: "Integrate Gx402 SDK with Farcaster applications"
-icon: "hashtag"
+title: "Farcaster & Mobile Integration"
+description: "How to integrate Gx402 payments in Farcaster mini apps and mobile games using Gx402 middleware."
 ---
 
-# Farcaster Integration
+# Farcaster & Mobile Integration
 
-The Gx402 SDK provides deep integration with Farcaster, enabling x402 functionality for decentralized social gaming experiences.
+Mobile and Farcaster integrations prioritize smooth handoffs and native wallet UX. Gx402 covers patterns for WalletConnect, deep-links, and companion apps so payments feel native and secure.
 
-## Installation
+---
 
-### NPM Package
+## Prerequisites
+- Mobile wallet support (WalletConnect, in-app SDKs)  
+- Farcaster mini app configuration (if applicable)  
+- Gx402 Express middleware
 
-Install the Gx402 SDK using npm or yarn:
+---
 
-```bash
-npm install @Gx402/sdk
-# or
-yarn add @Gx402/sdk
-```
+## Mobile flow patterns
+- **In-app Wallet:** Directly sign payload within the app.  
+- **WalletConnect:** Open WalletConnect modal or deep-link to wallet app.  
+- **Companion app (console/packaged):** Use companion to sign and return signature via deep-link.
 
-## Minimal Implementation Example
+---
 
-Here's a basic example of how to integrate the Gx402 SDK into your Farcaster application to handle in-game purchases.
-
-```javascript
-import { Gx402Client } from '@Gx402/sdk';
-
-const Gx402 = new Gx402Client({
-    receiverAddress: 'OxYourWalletAddress',
-    network: 'base',
-    // Auto-detects Farcaster environment
-});
-
-// Buy boost in game
-async function buyBoost() {
-    try {
-        const tx = await Gx402.purchase({
-            itemId: 'speed_boost_10min',
-            price: '0.25', // $0.25
-            currency: 'USDC',
-        });
-        console.log('Payment successful:', tx.hash);
-        applyBoost('speed', 600); // 10 minutes
-    } catch (error) {
-        console.error('Payment failed:', error);
-        showToast('Payment failed. Please try again.');
-    }
-}
-
-// Placeholder functions - implement your actual game logic here
-function applyBoost(type, duration) { console.log(`Applying ${type} boost for ${duration} seconds.`); }
-function showToast(message) { console.log(`Toast: ${message}`); }
-```
-
-## Core Features
-
-*   **Framework-agnostic**: Works with popular frameworks like React, Vue, and Svelte.
-*   **Telegram Mini App optimized**: Specifically designed for seamless integration with Telegram Mini Apps.
-*   **Coinbase Smart Wallet integration**: Supports Coinbase Smart Wallet for enhanced user experience.
-*   **Farcaster Frame actions support**: Enables interactive experiences within Farcaster Frames.
-*   **NPM package distribution**: Easily integrate into your project using npm.
-
-
-## Resources
-
-- [Farcaster SDK API Reference](/api-reference/farcaster-sdk)
-- [Farcaster Examples](https://github.com/Gx402/farcaster-examples)
-- [Farcaster Development Guide](/platforms/farcaster/development)

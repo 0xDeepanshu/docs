@@ -1,19 +1,8 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9.06145 23.1079C5.26816 22.3769 -3.39077 20.6274 1.4173 5.06384C9.6344 6.09939 16.9728 14.0644 9.06145 23.1079Z" fill="url(#paint0_linear_17557_2021)"/>
-<path d="M8.91928 23.0939C5.27642 21.2223 0.78371 4.20891 17.0071 0C20.7569 7.19341 19.6212 16.5452 8.91928 23.0939Z" fill="url(#paint1_linear_17557_2021)"/>
-<path d="M8.91388 23.0788C8.73534 19.8817 10.1585 9.08525 23.5699 13.1107C23.1812 20.1229 18.984 26.4182 8.91388 23.0788Z" fill="url(#paint2_linear_17557_2021)"/>
-<defs>
-<linearGradient id="paint0_linear_17557_2021" x1="3.77557" y1="5.91571" x2="5.23185" y2="21.5589" gradientUnits="userSpaceOnUse">
-<stop stop-color="#18E299"/>
-<stop offset="1" stop-color="#15803D"/>
-</linearGradient>
-<linearGradient id="paint1_linear_17557_2021" x1="12.1711" y1="-0.718425" x2="10.1897" y2="22.9832" gradientUnits="userSpaceOnUse">
-<stop stop-color="#16A34A"/>
-<stop offset="1" stop-color="#4ADE80"/>
-</linearGradient>
-<linearGradient id="paint2_linear_17557_2021" x1="23.1327" y1="15.353" x2="9.33841" y2="18.5196" gradientUnits="userSpaceOnUse">
-<stop stop-color="#4ADE80"/>
-<stop offset="1" stop-color="#0D9373"/>
-</linearGradient>
-</defs>
+<svg width="416" height="666" viewBox="0 0 416 666" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M197.5 50.1377L44.5 104.638V372.138L197.5 480.638V218.638H120V272.638H146V376.638L95.5 340.638V145.638L146 126.138V185.138L197.5 164.638V50.1377Z" fill="white"/>
+<path d="M270.5 68.6377L218.5 49.6377V163.638L266.5 253.138L218.5 346.638V481.138L270.5 443.638V358.638L295 310.638L319.5 354.138V410.138L371.5 372.638V337.138L325.5 253.138L371.5 162.638V103.638L319 85.6377V151.638L295 196.638L270.5 151.638V68.6377Z" fill="white"/>
+<path d="M208.3 11.6377L11 79.6837V376.135C11 384.249 14.9381 391.859 21.5626 396.545L208.3 528.638L394.467 396.547C401.074 391.858 405 384.259 405 376.157V79.6837L208.3 11.6377Z" stroke="white" stroke-width="22"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M169 563.638V665.638H251V563.638H169ZM196 590.138H224V639.638H196V590.138Z" fill="white"/>
+<path d="M76 639.138V563.638H102V612.638H130V563.638H157V665.638H130V639.138H76Z" fill="white"/>
+<path d="M264 590.138V563.638H346V627.138H291.669V639.138H346V665.638H264V601.638H318.834V590.138H264Z" fill="white"/>
 </svg>

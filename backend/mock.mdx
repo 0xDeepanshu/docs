@@ -1,0 +1,18 @@
+---
+title: "Mock"
+description: "How to safely test Gx402 integrations locally and in staging using mocks and testnet."
+---
+
+# Testnet Mode
+
+
+Testing payments safely is essential. x402 commonly offers a sandbox/test environment — use it. If x402 doesn't provide a sandbox, use local mocks and a staging account.
+
+## Options for testing
+- **x402 testnet**: if provided, configure your server to call the testbase API endpoints and testnets (Base, solana-devnet, etc.).  
+- **Mock provider**: run a lightweight mock x402 server that returns deterministic responses; helpful for offline UI testing.  
+- **In-memory store**: for quick dev, store `paymentSession` in memory instead of DB (not for multi-instance testing).
+<Note>
+we don't provide any configured testnet or mock provider, so we prefer to use local testnets!
+</Note>
+

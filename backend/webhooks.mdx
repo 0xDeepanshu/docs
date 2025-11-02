@@ -1,0 +1,31 @@
+---
+title: "Webhooks"
+description: "How to receive, verify, and process Gx402 (or relay) webhooks and reconcile payment state."
+---
+
+# Webhooks
+
+
+Webhooks let the payment provider (x402) notify you asynchronously when a payment changes state (confirmed, failed, refunded). They are critical for final reconciliation — do not rely only on immediate HTTP responses.
+
+## Typical webhook events
+- `payment.confirmed` — payment finalized on-chain or off-chain  
+- `payment.failed` — processing or on-chain failure  
+- `payment.refunded` — refund processed
+
+## Security: verify the webhook
+Always verify webhook authenticity. x402 likely provides either:
+
+- an `X-Provider-Signature` header (HMAC), or  
+- a signing key + signature you verify with public key cryptography.
+
+Example HMAC verification (Node):
+```js
+import crypto from 'crypto';
+
+function verifyWebhook(req, secret) {
+  const raw = JSON.stringify(req.body);
+  const sig = req.headers['x-x402-signature'];
+  const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+}

@@ -1,71 +1,41 @@
 ---
 title: "WebGL Integration"
-description: "Integrate Gx402 SDK with WebGL applications"
-icon: "globe"
+description: "How to integrate x402 payments into WebGL builds (browser) with Gx402 middleware."
 ---
 
 # WebGL Integration
 
-The Gx402 SDK provides full JavaScript support for WebGL applications, enabling x402 functionality in web-based games and experiences.
+WebGL builds run in the browser and can reuse standard web wallet tools (MetaMask, WalletConnect). Gx402 patterns make the flow identical to other platforms: call middleware → sign payload → confirm → finalize.
 
-## Installation
+---
 
-### NPM Package
+## Prerequisites
+- WebGL export from Unity (or any Web build)  
+- Browser wallets (Phantom) or WalletConnect support  
+- A Gx402 Express middleware backend
 
-Install the Gx402 Web3 SDK using npm or yarn:
+---
 
-```bash
-npm install @Gx402/sdk
-# or
-yarn add @Gx402/sdk
-```
+## Flow summary
+1. WebGL client calls `/create-payment`.  
+2. Backend formats payload and returns it.  
+3. In-browser wallet (MetaMask/WalletConnect) signs payload.  
+4. Client posts `signature` to `/confirm-payment`.  
+5. Backend calls x402 and returns status.
 
-## Minimal Implementation Example (Telegram Mini App)
+---
 
-Here's a basic example of how to integrate the Gx402 SDK into your WebGL or web-based project, specifically for a Telegram Mini App, to handle in-game purchases.
+## Web client example (JavaScript)
+```js
+async function startPayment(itemId) {
+  const create = await fetch('/create-payment', { method:'POST', body: JSON.stringify({ itemId }) }).then(r=>r.json());
+  const payload = create.payload;
 
-```javascript
-import { Gx402Client } from '@Gx402/sdk';
+  // MetaMask example (simple)
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+  const signer = accounts[0];
+  const signature = await ethereum.request({ method: 'personal_sign', params: [payload, signer] });
 
-const Gx402 = new Gx402Client({
-    receiverAddress: 'OxYourWalletAddress',
-    network: 'base',
-    // Auto-detects Telegram environment
-    walletProvider: 'telegram',
-});
-
-// Buy boost in game
-async function buyBoost() {
-    try {
-        const tx = await Gx402.purchase({
-            itemId: 'speed_boost_10min',
-            price: '0.25', // $0.25
-            currency: 'USDC',
-        });
-        console.log('Payment successful:', tx.hash);
-        applyBoost('speed', 600); // 10 minutes
-    } catch (error) {
-        console.error('Payment failed:', error);
-        showToast('Payment failed. Please try again.');
-    }
+  const confirm = await fetch('/confirm-payment', { method:'POST', body: JSON.stringify({ paymentId: create.paymentId, signature }) }).then(r=>r.json());
+  if (confirm.status === 'finalized') grantItem();
 }
-
-// Placeholder functions - implement your actual game logic here
-function applyBoost(type, duration) { console.log(`Applying ${type} boost for ${duration} seconds.`); }
-function showToast(message) { console.log(`Toast: ${message}`); }
-```
-
-## Core Features
-
-*   **Framework-agnostic**: Works with popular frameworks like React, Vue, and Svelte.
-*   **Telegram Mini App optimized**: Specifically designed for seamless integration with Telegram Mini Apps.
-*   **Coinbase Smart Wallet integration**: Supports Coinbase Smart Wallet for enhanced user experience.
-*   **Farcaster Frame actions support**: Enables interactive experiences within Farcaster Frames.
-*   **NPM package distribution**: Easily integrate into your project using npm.
-
-
-## Resources
-
-- [WebGL SDK API Reference](/api-reference/webgl-sdk)
-- [WebGL Example Project](https://github.com/Gx402/webgl-examples)
-- [Performance Optimization Guide](/platforms/webgl/performance)

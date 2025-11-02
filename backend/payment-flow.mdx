@@ -1,0 +1,17 @@
+---
+title: "Payment flow"
+description: "Step-by-step payment lifecycle: create → sign → confirm → finalize and the responsibilities of each layer."
+---
+
+# Payment flow
+
+This is the canonical flow we use across all platforms. It's the same x402 flow but wrapped by Gx402 middleware patterns so every client behaves the same.
+
+## 1) Create (client → backend)
+- Client requests `POST /create-payment` with `{ itemId, amount, userAddress, metadata }`.  
+- Server creates a `paymentSession`  and builds a **deterministic payload** (paymentId, amount, timestamp, chainId, optional nonce).  
+- Server may optionally call x402's create endpoint to register the session — not required if you only need a client-sign flow.
+
+**Server response**
+```json
+{ "paymentId": "pay_123", "payload": "string-to-sign", "expiresAt": 1670000000000 }
