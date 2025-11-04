@@ -1,26 +1,49 @@
 ---
 title: "Farcaster & Mobile Integration"
-description: "How to integrate Gx402 payments in Farcaster mini apps and mobile games using Gx402 middleware."
-icon : "/images/farcaster.svg"
+description: "Use Gx402 patterns to add x402 payments into Farcaster miniapps and in-game purchases using Unity or Unreal builds. This page adapts the x402 miniapp approach and extends it for engine-built miniapps and in-game flows."
+icon: "/images/farcaster.svg"
 ---
 
-# Farcaster & Mobile Integration
+### Quick summary
 
-Mobile and Farcaster integrations prioritize smooth handoffs and native wallet UX. Gx402 covers patterns for WalletConnect, deep-links, and companion apps so payments feel native and secure.
+Gx402 provides **x402 integration examples and server middleware** so teams can accept in-app payments (miniapps) and in-game purchases from engine builds (Unity/Unreal) running inside Farcaster or as standalone games.
+
+We are **not** shipping a proprietary SDK — instead, you get:
+- Engine-native examples  
+- A recommended Express middleware pattern  
+- Deployment notes for reliable x402 payments (`create → sign → confirm → finalize`)
+
+(Adapted from the x402 miniapp template)
+
+---
+
+## What this page covers
+
+- What Gx402 provides for miniapps and in-game payments  
+- Prerequisites and environment configuration  
+- Quick Start (clone + run) for Gx402 templates (middleware + engine build)  
+- How the template works: middleware, protected endpoints, frontend/engine wiring  
+- Special guidance for Unity and Unreal builds running as Farcaster miniapps or standalone games  
+- Testing, deployment, best practices, and troubleshooting  
+
+---
+
+## Why use Gx402 for miniapps & games
+
+- **Seamless in-app payments:** let users pay without leaving the miniapp or game UI  
+- **Engine parity:** same deterministic payload and server logic for Unity, Unreal, WebGL, Telegram, and Farcaster  
+- **Transparent server patterns:** clear Express middleware examples for create/confirm and webhook handling — so you control secrets and audit trails  
+- **In-game UX:** patterns and tips for low-friction payment flows (relayer examples, short payloads, optimistic UI guidance)  
 
 ---
 
 ## Prerequisites
-- Mobile wallet support (WalletConnect, in-app SDKs)  
-- Farcaster mini app configuration (if applicable)  
-- Gx402 Express middleware
 
----
-
-## Mobile flow patterns
-- **In-app Wallet:** Directly sign payload within the app.  
-- **WalletConnect:** Open WalletConnect modal or deep-link to wallet app.  
-- **Companion app (console/packaged):** Use companion to sign and return signature via deep-link.
+- Node.js 18+ and a package manager (`pnpm`, `npm`, or `yarn`)  
+- Farcaster uses it's In-App wallet connection so you don't need any external wallet to connect
+- x402 provider account & API keys (from your x402 provider)  
+- Unity (2021+) or Unreal (4.27+/5.x) for engine builds intended to run inside Farcaster or as standalone apps  
+- Basic knowledge of wallet signing (EIP-191 or EIP-712) and server-side HMAC/secret handling  
 
 ---
 

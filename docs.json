@@ -29,9 +29,9 @@
             "pages": [
               "platforms/unity",
               "platforms/unreal-engine",
-              "platforms/webgl",
               "platforms/telegram",
               "platforms/farcaster",
+              "platforms/base",
               "platforms/mobile"
             ]
           },

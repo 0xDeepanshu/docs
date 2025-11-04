@@ -11,36 +11,111 @@ Gx402 shows how to integrate **x402** payments into Unity projects using engine-
 
 ## Prerequisites
 - Unity 2020.3 LTS or newer (2021+ recommended)  
-- A WalletConnect plugin for Unity (or a compatible wallet bridge) for standalone builds  
-- Phantom or browser wallet for WebGL builds  
-- A running Express backend following the Gx402 middleware pattern
 
 ---
 
-## High-level flow
-1. Player taps **Buy** in Unity.  
-2. Unity calls your middleware `/create-payment`. Backend builds the signable `payload` (and optionally registers with x402).  
-3. Unity launches wallet flow (WalletConnect or browser). User signs `payload`.  
-4. Unity posts `signature` to `/confirm-payment`. Backend verifies signature and calls x402 confirm/finalize.  
-5. Backend responds and/or webhook notifies final status. Unity grants the item.
+
+##  High-Level Flow
+
+1. **Connect Wallet**  
+   The player taps **Connect Wallet** in the Unity UI.  
+   - `Gx402Manager` calls `ConnectWalletAsync()` from the Solana SDK (e.g., MagicBlocks).  
+   - The user approves the prompt in Phantom or Solflare.  
+   - Once connected, `Web3.Account` stores the wallet address and updates the UI with the active wallet.
 
 ---
 
-## Unity pseudocode (C#)
+2. **Initiate Payment Request**  
+   The player taps **Buy** (or **Call API**) to begin an x402-protected flow.  
+   - Unity triggers `HandleApiCallOptimized()`.  
+   - The script validates the connected wallet (`CheckWallet()`).  
+   - The payer’s public key is retrieved to identify who’s making the payment.
+
+---
+
+3. **Build the Transaction**  
+   Unity constructs a Solana USDC transaction via `BuildUsdcTransaction()`.  
+   - Fetches a **recent blockhash** for transaction validity.  
+   - Derives **payer** and **recipient** token accounts (ATAs).  
+   - Bundles three key instructions:
+     1. Create payer ATA *(idempotent)*  
+     2. Create recipient ATA *(idempotent)*  
+     3. Transfer required USDC amount  
+   - Finalizes and signs the transaction object with the payer as the fee payer.
+
+---
+
+4. **Sign and Send**  
+   - The wallet prompts the player to approve and sign the transaction.  
+   - On approval, Unity sends it using `SendTransactionAsync()`.  
+   - The Solana network returns a **transaction signature** (`TX ID`), confirming the payment on-chain.  
+   - `ConfirmTransaction()` ensures final settlement before proceeding.
+
+---
+
+5. **Verify and Unlock (x402 Flow)**  
+   - Unity sends the **transaction signature** in the `X-402-Payment` header via a POST request to your backend.  
+   - The backend verifies the transaction (correct amount, mint, recipient).  
+   - Once confirmed, it unlocks the API endpoint or in-game reward.  
+   - Unity receives a `200 OK` response and updates the UI to show:  
+     ✅ *“Payment Verified — Access Granted!”*
+
+---
+
+> 💡 **Tip:**  
+> This flow allows any Unity-based Solana game to implement secure, non-custodial payments with a single, reusable `Gx402Manager` script — fully compliant with x402 payment standards.
+
+---
+
+## Unity WalletConnection (C#)
 ```csharp
 // Unity - simple async flow (concept)
-async Task StartPurchase(string itemId) {
-  var createRes = await HttpClient.PostJsonAsync("/create-payment", new { itemId, playerAddress });
-  string payload = createRes.payload;
-  string paymentId = createRes.paymentId;
-
-  // Use WalletConnect plugin to sign
-  string signature = await WalletConnect.SignMessage(payload);
-
-  var confirmRes = await HttpClient.PostJsonAsync("/confirm-payment", new { paymentId, signature });
-  if (confirmRes.status == "finalized") {
-    GrantItem(itemId);
-  } else {
-    ShowError(confirmRes.error || "Payment failed");
-  }
+{
+    Web3.OnWalletChangeState += OnWalletStateChanged;
+    OnWalletStateChanged();
 }
+
+private void OnDestroy()
+{
+    Web3.OnWalletChangeState -= OnWalletStateChanged;
+}
+
+public void ConnectWallet()
+{
+    ConnectWalletAsync().Forget();
+}
+
+public void DisconnectWallet()
+{
+    if (Web3.Instance != null && Web3.Wallet != null)
+    {
+        Web3.Instance.Logout();
+    }
+}
+
+private async UniTask ConnectWalletAsync()
+{
+    if (Web3.Instance == null)
+    {
+        Debug.LogError("Web3.Instance is not found.");
+        UpdateStatus("Error: Web3 not initialized.");
+        return;
+    }
+
+    try
+    {
+        UpdateStatus("Connecting...");
+        Account connectedAccount = await Web3.Instance.LoginWalletAdapter();
+        if (connectedAccount == null)
+        {
+            UpdateStatus("Connection cancelled.");
+        }
+    }
+    catch (Exception e)
+    {
+        Debug.LogError($"Error connecting wallet: {e.Message}");
+        UpdateStatus("Connection failed.");
+    }
+}
+
+---
