@@ -1,5 +1,140 @@
 ---
-title: "Base Mini App Integration"
-description: "Coming Soon"
+title: "Base Mini-App Integration"
+description: "Use Gx402 patterns to integrate x402 payments into Base Mini-Apps and Unity/Unreal builds running on Base network."
 icon: "/images/base.jpeg"
 ---
+
+### Quick summary
+
+Gx402 provides **x402-integration examples and server middleware** so teams can accept in-app payments (mini-apps) and in-game purchases from engine builds on **Base network**.  
+By running your Unity or Unreal WebGL build inside a Base Mini-App or supporting Base-connected wallets, you can apply the same  
+`create → sign → confirm → finalize` logic with minimal changes.
+
+---
+
+## Prerequisites
+
+- Node.js 18+ and a package manager (`pnpm`, `npm`, or `yarn`)  
+- A Base Mini-App environment (via **Base OnchainKit** or **MiniKit**)  
+- x402 provider account & API keys (for Gx402 middleware)  
+- Unity (2021+) or Unreal (4.27+/5.x) for engine builds intended to run inside a Base Mini-App  
+- Basic wallet signing knowledge (EVM / Base network) and server-side HMAC/secret logic for verification  
+
+---
+
+<Note>
+We are still working on the flow of Unity Integrations for Miniapp, We will be providing the Unity WebGL 
+Integration Kit soon
+</Note>
+
+## High-Level Flow (Base Mini-App + Gx402)
+
+1. **Launch & Context**  
+   - Your Mini-App runs inside the Base container using **OnchainKit/MiniKit**.  
+   - Wallet context is injected, enabling seamless transaction handling on Base.  
+
+2. **Connect Wallet / Session**  
+   - Your Unity/WebGL or web client connects via the Base wallet provider.  
+   - Once connected, the wallet address and session state are stored.  
+
+3. **Create Payment Requirements (Gx402)**  
+   - The frontend calls your backend to create a `paymentRequirements` object using Gx402.  
+   - If no valid `X-402-Payment` header exists, the backend returns a **402 challenge**.
+
+4. **Sign & Send Transaction**  
+   - The client (Unity/web) builds a **USDC on Base** transaction and requests user signature.  
+   - On confirmation, you receive a `txSignature` (TX hash).  
+
+5. **Verify & Unlock**  
+   - Client sends `X-402-Payment: <txSignature>` to backend.  
+   - Backend verifies the transaction and unlocks the resource if valid.  
+
+6. **Access Granted**  
+   - Client receives a `200 OK` response.  
+   - Unity updates UI → ✅ *“Payment Verified — Access Granted!”*
+
+---
+
+##  Example Server Snippet (Next.js / Express style)
+
+```javascript
+export async function POST(req) {
+  try {
+    const paymentHeader = x402.extractPayment(req.headers);
+
+    const paymentRequirements = await x402.createPaymentRequirements({
+      price: {
+        amount: "2500000", // e.g., 2.5 USDC (6 decimals)
+        asset: {
+          address: "<YOUR_USDC_ADDRESS_ON_BASE>",
+          decimals: 6,
+        },
+      },
+      network: "base", // or "base-sepolia" for testnet
+      config: {
+        description: "Base Mini-App purchase via Gx402",
+        resource: `${process.env.BASE_URL}/api/your-endpoint`,
+      },
+    });
+
+    if (!paymentHeader) {
+      const response = x402.create402Response(paymentRequirements);
+      return new Response(JSON.stringify(response.body), {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const verified = await x402.verifyPayment(paymentHeader, paymentRequirements);
+    if (!verified) {
+      return new Response(JSON.stringify({ error: "Invalid or unverified payment" }), {
+        status: 402,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const result = {
+      message: "✅ Payment Verified — Access Granted!",
+      receivedData: body,
+    };
+
+    await x402.settlePayment(paymentHeader, paymentRequirements);
+
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("API Error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+
+
+---
+
+```
+ ## Folder Structure (Base Mini-App Web + Unity WebGL build)
+ ```bash
+ base-miniapp/
+├── web/
+│   ├── index.html
+│   ├── init.tsx
+│   ├── payment.ts
+│   └── unity-embed.ts
+├── unity/
+│   └── Build/
+│       ├── Build.data
+│       ├── Build.framework.js
+│       ├── Build.loader.js
+│       └── Build.wasm
+├── api/
+│   ├── createPayment.ts
+│   ├── verifyPayment.ts
+│   ├── authInit.ts
+│   └── webhook.ts
+└── package.json

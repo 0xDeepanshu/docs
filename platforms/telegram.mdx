@@ -1,38 +1,146 @@
 ---
-title: "Telegram Mini App Integration"
-description: "Integrating x402 payments into Telegram Mini Apps with the Gx402 middleware approach."
+title: "Telegram Miniapp Integration"
+description: "Adapt the Gx402 x402 payment flow for Telegram Mini-Apps and Unity WebGL games running inside Telegram. Covers init-data auth, WebApp SDK, invoice vs on-chain flows, and example server + frontend snippets."
 icon: "telegram"
 ---
 
-# Telegram Integration
+### Quick summary
 
-
-
-Telegram mini apps use an in-app webview and have tight constraints. Gx402 shows how to wire x402 payment flows inside mini apps using the same middleware pattern: create → sign → confirm.
+This page shows how to run your Unity WebGL or web-based game **inside Telegram Mini-Apps (Web Apps)** and use the same **Gx402 / x402** payment verification pattern: `create → sign → confirm → finalize`. Telegram Mini-Apps expose a JavaScript SDK (`window.TelegramWebApp`) for launch data, lifecycle, and UI primitives; Telegram also supports Bot Payments (invoices) for fiat flows and can host Web3/Unity WebGL builds inside the webview.
 
 ---
+<Note>
+We are still working on the flow of Unity Integrations for Miniapp, We will be providing the Unity WebGL 
+Integration Kit soon
+</Note>
 
 ## Prerequisites
-- Telegram Bot + Mini App setup (webview)  
-- Wallet integration strategy (in-app wallet or WalletConnect via browser fallback)  
-- Gx402 middleware backend
+
+- Node.js 18+ and a package manager (`pnpm`, `npm`, or `yarn`)  
+- A Telegram bot with Web Apps enabled (bot token, hosting URL configured)  
+- x402 provider account & API keys (Gx402 middleware will call/create/verify payments)  
+- Unity (2021+) for Unity WebGL exports (packaged into your web app that Telegram will load)  
+- Basic knowledge of wallet signing (on-chain EVM/Solana flows) or familiarity with Telegram Bot Payments if you intend to accept fiat invoices.
 
 ---
 
-## Flow summary
-1. Telegram mini app (webview) calls `/create-payment` on your middleware.  
-2. Middleware returns payload.  
-3. If an in-app wallet exists, use it to sign; otherwise trigger WalletConnect flow via opening a browser tab or QR flow.  
-4. Send signature to `/confirm-payment`. Backend finalizes via x402.  
-5. Use Telegram API to update UI/message with result.
+## High-Level Flow (Telegram Mini-App + Gx402)
+
+1. **Launch & Auth (Telegram WebApp Init)**  
+   Use `window.TelegramWebApp` and the `initData` payload for session/user context.
+
+2. **Connect Wallet / Session**  
+   If you are using an on-chain wallet or in-app wallet connectors (Web3), initialize it.  
+   If using Telegram Bot Payments for fiat, proceed with invoice flow.
+
+3. **Create Payment Requirements (Gx402)**  
+   Frontend calls your backend (`/api/createPayment`) which uses Gx402’s `createPaymentRequirements()`.  
+   If no valid `X-402-Payment` header, backend returns a 402 challenge.
+
+4. **Sign & Send (On-chain) or Pay (Invoice)**  
+   - On-chain: Build/Sign transaction (e.g., Solana/EVM) in Unity/web client → receive `txSignature`.  
+   - Invoice (fiat): Use Telegram Bot Payments API to create an invoice and let user pay.
+
+5. **Verify & Unlock (Gx402)**  
+   Client sends `X-402-Payment: <txSignature_or_invoiceProof>` in header to your verification endpoint.  
+   Backend verifies transaction or invoice, then responds with `200 OK` and unlocks the asset/resource.
 
 ---
 
-## Implementation tips
-- Use Telegram’s `WebApp` JS SDK to show modals and pass data between webview and bot context.  
-- For signing, prefer WalletConnect if in-app wallet is not available.
+## Telegram WebApp — Frontend snippet
+
+```ts
+// Example using TypeScript / Vanilla Web for Telegram WebApp
+import { useEffect } from 'react';
+
+declare global {
+  interface Window {
+    TelegramWebApp?: {
+      initData: string;
+      onEvent: (event: string, handler: () => void) => void;
+      ready: boolean;
+      // ... other WebApp SDK props
+    };
+  }
+}
+
+export default function TelegramMiniApp() {
+  useEffect(() => {
+    if (window.TelegramWebApp) {
+      window.TelegramWebApp.onEvent('themeChanged', () => {
+        // handle theme change
+      });
+      if (!window.TelegramWebApp.ready) {
+        window.TelegramWebApp.onEvent('mainButtonClicked', () => {
+          makePayment();
+        });
+      } else {
+        // app is ready
+        initSession();
+      }
+    }
+  }, []);
+
+  async function initSession() {
+    const initData = window.TelegramWebApp?.initData;
+    if (initData) {
+      // send initData to backend for verification/auth
+      await fetch('/api/authInit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initData }),
+      });
+    }
+  }
+
+  async function makePayment() {
+    const resp = await fetch('/api/createPayment', { method: 'POST' });
+    const body = await resp.json();
+    if (resp.status === 402 && body.challenge) {
+      // Perform on-chain or invoice payment using body.challenge
+      // After payment, call verify endpoint
+      await fetch('/api/verifyPayment', {
+        method: 'POST',
+        headers: { 'X-402-Payment': body.challengeSignature },
+        body: JSON.stringify({ metadata: 'yourInfo' }),
+      });
+      // Handle success or failure
+    }
+  }
+
+  return (
+    <div>
+      <h1>Telegram Mini-App Game</h1>
+      <button onClick={makePayment}>Buy</button>
+    </div>
+  );
+}
+
 
 ---
 
-## Example snippet (client side)
-building soon...
+```
+ ## Folder Structure (Telegram Mini-App Web + Unity WebGL build)
+ ```bash
+ telegram-miniapp/
+├── web/
+│   ├── index.html
+│   ├── init.tsx
+│   ├── payment.ts
+│   └── unity-embed.ts
+├── unity/
+│   └── Build/
+│       ├── Build.data
+│       ├── Build.framework.js
+│       ├── Build.loader.js
+│       └── Build.wasm
+├── api/
+│   ├── authInit.ts
+│   ├── createPayment.ts
+│   ├── verifyPayment.ts
+│   └── webhook.ts
+└── package.json
+
+
+---
+```

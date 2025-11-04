@@ -15,25 +15,6 @@ We are **not** shipping a proprietary SDK — instead, you get:
 
 (Adapted from the x402 miniapp template)
 
----
-
-## What this page covers
-
-- What Gx402 provides for miniapps and in-game payments  
-- Prerequisites and environment configuration  
-- Quick Start (clone + run) for Gx402 templates (middleware + engine build)  
-- How the template works: middleware, protected endpoints, frontend/engine wiring  
-- Special guidance for Unity and Unreal builds running as Farcaster miniapps or standalone games  
-- Testing, deployment, best practices, and troubleshooting  
-
----
-
-## Why use Gx402 for miniapps & games
-
-- **Seamless in-app payments:** let users pay without leaving the miniapp or game UI  
-- **Engine parity:** same deterministic payload and server logic for Unity, Unreal, WebGL, Telegram, and Farcaster  
-- **Transparent server patterns:** clear Express middleware examples for create/confirm and webhook handling — so you control secrets and audit trails  
-- **In-game UX:** patterns and tips for low-friction payment flows (relayer examples, short payloads, optimistic UI guidance)  
 
 ---
 
@@ -47,3 +28,122 @@ We are **not** shipping a proprietary SDK — instead, you get:
 
 ---
 
+<Note>
+We are still working on the flow of Unity Integrations for Miniapp, We will be providing the Unity WebGL 
+Integration Kit soon
+</Note>
+
+## Farcaster Miniapp Integration Flow
+ - Farcaster Miniapps provide native in-app wallet connections (e.g., Wagmi, Privy, or custom connectors).
+
+ - The Unity WebGL build runs seamlessly inside the Farcaster frame, maintaining wallet context and session continuity.
+
+ - All in-game and external transactions follow the same x402-compliant payment logic, powered by the Gx402 middleware.
+
+ - Gx402 acts as a facilitator layer, verifying Solana transactions and unlocking protected APIs or in-game assets post-payment.
+
+ - This architecture ensures cross-platform compatibility, allowing the same Unity game to run on Farcaster, Telegram, or browser-based miniapps with minimal code changes.
+
+
+ ---
+
+
+ ## Server
+ ```javascript
+ export async function POST(req: NextRequest) {
+  try {
+    const paymentHeader = x402.extractPayment(req.headers);
+
+    const paymentRequirements = await x402.createPaymentRequirements({
+      price: {
+        amount: "2500000",
+        asset: {
+          address: "Your address",
+          decimals: 6,
+        },
+      },
+      network: 'solana-devnet' || 'base-sepolia'
+      config: {
+        description: 'Response from Gx402',
+        resource: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:61664'}/api/-your-endpoint` as `${string}://${string}`,
+      },
+    });
+
+    if (!paymentHeader) {
+      const response = x402.create402Response(paymentRequirements);
+      return NextResponse.json(response.body, {
+        status: response.status,
+      });
+    }
+
+    const verified = await x402.verifyPayment(paymentHeader, paymentRequirements);
+    if (!verified) {
+      return NextResponse.json(
+        { error: 'Invalid or unverified payment' },
+        { status: 402, headers: corsHeaders }
+      );
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const result = {
+      message: '✅ Hello, you paid successfully!',
+      receivedData: body,
+    };
+
+    await x402.settlePayment(paymentHeader, paymentRequirements);
+
+    return NextResponse.json(result, { headers: corsHeaders });
+
+  } catch (error: any) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500, headers: corsHeaders }
+    );
+  }
+}
+
+
+---
+```
+## Unity Implementation
+  For now we will be using the same approach for build as of Unity Integration section
+
+  <Note>
+  We will be providing the code snippet to connect the In-App wallet inside the game as repo is still under construction
+  </Note>
+
+  ---
+
+ ## Folder Structure (For Unity WebGL build)
+```bash
+farcaster-miniapp/
+├── app/
+│   ├── .well-known/
+│   │   └── farcaster.json
+│   ├── api/
+│   │   ├── notify/
+│   │   ├── protected/
+│   │   └── webhook/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── providers.tsx
+│   ├── theme.css
+│   └── unityplayer.tsx
+│
+├── lib/
+│
+├── node_modules/
+│
+├── public/
+│   └── unity/
+│       ├── Build/
+│       │   ├── Build.data
+│       │   ├── Build.framework.js
+│       │   ├── Build.loader.js
+│       │   ├── Build.wasm
+│       └── TemplateData/
+│           └── index.html
+│
+└── package.json

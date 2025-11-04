@@ -119,3 +119,74 @@ private async UniTask ConnectWalletAsync()
 }
 
 ---
+
+
+```
+## CallApiButton()
+Now to call the API with Gx402 you just need to call HandleApi function from gx402 game manager
+
+
+## Unity CallApiButton (C#)
+```csharp
+// Unity - simple async flow (concept)
+public void CallApiButton()
+{
+    HandleApiCallOptimized().Forget();
+}
+
+private async UniTask HandleApiCallOptimized()
+{
+    if (!CheckWallet()) return;
+
+    try
+    {
+        UpdateStatus("Preparing transaction...");
+        PublicKey payerPublicKey = Web3.Account.PublicKey;
+
+        var transaction = await BuildUsdcTransaction(
+            payerPublicKey,
+            new PublicKey(RECIPIENT_OWNER_ADDRESS),
+            new PublicKey(USDC_MINT_DEVNET),
+            AMOUNT_REQUIRED,
+            TOKEN_DECIMALS
+        );
+
+        if (transaction == null)
+        {
+            UpdateStatus("Error: Could not build transaction.");
+            return;
+        }
+
+        UpdateStatus("Please sign transaction...");
+        var signedTx = await Web3.Wallet.SignTransaction(transaction);
+        if (signedTx == null)
+        {
+            UpdateStatus("Error: Transaction signing failed.");
+            return;
+        }
+
+        UpdateStatus("Sending transaction...");
+        var sendResult = await Web3.Rpc.SendTransactionAsync(signedTx.Serialize());
+        string signature = sendResult.WasSuccessful ? sendResult.Result : null;
+
+        if (string.IsNullOrEmpty(signature))
+        {
+            UpdateStatus("Error: Failed to send transaction.");
+            Debug.LogError($"[X402] Failed to send transaction: {sendResult.Reason}");
+            return;
+        }
+
+        await Web3.Rpc.ConfirmTransaction(signature, Commitment.Confirmed);
+        Debug.Log($"[X402] Transaction confirmed! Signature: {signature}");
+
+        await PostWithSignature(signature, new RequestBody { someData = "hello from Unity" });
+    }
+    catch (Exception e)
+    {
+        Debug.LogError($"[X402] Optimized Flow Error: {e.Message}");
+        UpdateStatus($"Error: {e.Message}");
+    }
+}
+
+
+---
