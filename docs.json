@@ -80,6 +80,18 @@
         ]
       },
       {
+        "tab": "Ai-Agent/ERC-8004",
+        "groups": [
+          {
+            "group": "Resources",
+            "pages": [
+              "agent/erc-8004"
+              
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Tutorials",
         "groups": [
           {
@@ -113,6 +125,7 @@
           }
         ]
       }
+       
     ],
     "global": {
       "anchors": [
