@@ -80,6 +80,18 @@
         ]
       },
       {
+        "tab": "Facilitator",
+        "groups": [
+          {
+            "group": "Resources",
+            "pages": [
+              "Facilitator/facilitator"
+              
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Ai-Agent/ERC-8004",
         "groups": [
           {
@@ -138,6 +150,11 @@
           "anchor": "Discord",
           "href": "https://discord.gg/RSzdmPWQ",
           "icon": "discord"
+        },
+        {
+          "anchor": "Twitter",
+          "href": "https://x.com/gx4O2",
+          "icon": "x"
         }
       ]
     }
