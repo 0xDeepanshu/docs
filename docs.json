@@ -25,6 +25,13 @@
       ]
           },
           {
+            "group": "Gx402 Facilitator",
+            "pages": [
+        
+        "facilitator"
+      ]
+          },
+          {
             "group": "Platform Guides",
             "pages": [
               "platforms/unity",
@@ -75,18 +82,6 @@
             "pages": [
               "roadmap",
               "pricing"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Facilitator",
-        "groups": [
-          {
-            "group": "Resources",
-            "pages": [
-              "Facilitator/facilitator"
-              
             ]
           }
         ]
