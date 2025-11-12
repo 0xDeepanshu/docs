@@ -15,7 +15,68 @@ Gx402 shows how to integrate **x402** payments into Unity projects using engine-
 ---
 
 
-##  High-Level Flow
+## High-Level Flow
+
+<Tabs >
+
+<Tab title='EVM'>
+
+###  EVM 
+
+1. **Connect Wallet**  
+   - `Gx402Manager` triggers EVM wallet connect.  
+   - User approves in **MetaMask/Rabby**.  
+   - Address is saved for onchain verification.
+
+---
+
+2. **Initiate Payment Request**  
+   - Player taps **Buy** / **Call API**.  
+   - Unity triggers `HandleApiCallOptimized()`.  
+   - Validates EVM address + fetches chain ID.
+
+---
+
+3. **Build the Transaction**
+    - Unity prepares an ERC-20 USDC transfer:
+
+    - Resolve token contract for the chain.
+
+    - Convert amount → token units (decimals).
+
+    - ABI-encode transfer(recipient, amount).
+
+    - Estimate gas + set to, data, value=0.
+  
+
+---
+
+4. **Sign and Send**
+
+    - Wallet pops up with transaction details.
+
+    - On approval, Unity sends the tx.
+
+    - Network returns a tx hash (0x...).
+
+    - Unity waits for receipt (status == 1).
+  
+---
+
+5. **Verify and Unlock (x402 Flow)**
+
+    - Unity sends the txHash in the X-402-Payment header.
+
+    - Backend checks ERC-20 Transfer event for correct from → to → amount.
+
+    - On success, backend returns 200 OK.
+
+    - Unity displays: ✅ “Payment Verified — Access Granted!”
+  </Tab>
+
+  <Tab title="Solana">
+
+## Solana 
 
 1. **Connect Wallet**  
    The player taps **Connect Wallet** in the Unity UI.  
@@ -60,14 +121,13 @@ Gx402 shows how to integrate **x402** payments into Unity projects using engine-
    - Unity receives a `200 OK` response and updates the UI to show:  
      ✅ *“Payment Verified — Access Granted!”*
 
----
-
-> 💡 **Tip:**  
-> This flow allows any Unity-based Solana game to implement secure, non-custodial payments with a single, reusable `Gx402Manager` script — fully compliant with x402 payment standards.
 
 ---
+
 
 ## Unity WalletConnection (C#)
+
+
 ```csharp
 // Unity - simple async flow (concept)
 {
@@ -118,15 +178,14 @@ private async UniTask ConnectWalletAsync()
     }
 }
 
+```
 ---
 
 
-```
-## CallApiButton()
-Now to call the API with Gx402 you just need to call HandleApi function from gx402 game manager
 
 
 ## Unity CallApiButton (C#)
+Now to call the API with Gx402 you just need to call HandleApi function from gx402 game manager
 ```csharp
 // Unity - simple async flow (concept)
 public void CallApiButton()
@@ -187,6 +246,150 @@ private async UniTask HandleApiCallOptimized()
         UpdateStatus($"Error: {e.Message}");
     }
 }
+```
+
+--- 
+
+## Express Server
+
+```ts
+
+// app/api/try/route.ts (or pages/api/try.ts)
+
+import { NextRequest, NextResponse } from 'next/server';
+import { X402PaymentHandler } from 'x402-solana/server';
+
+// ✅ Define CORS headers ONCE — include X-402-Payment!
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With, X-402-Payment',
+};
+
+const x402 = new X402PaymentHandler({
+  network: 'solana-devnet',
+  treasuryAddress: process.env.TREASURY_WALLET_ADDRESS!,
+  facilitatorUrl: 'https://facilitator.payai.network', // ✅ No trailing spaces!
+});
+
+export async function OPTIONS() {
+  // ✅ Return full CORS headers in preflight
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
+}
+
+export async function GET(req: NextRequest){
+   try {
+    const paymentHeader = x402.extractPayment(req.headers);
+
+    const paymentRequirements = await x402.createPaymentRequirements({
+      price: {
+        amount: "2500000",
+        asset: {
+          address: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
+          decimals: 6,
+        },
+      },
+      network: 'solana-devnet',
+      config: {
+        description: 'AI Chat Request Example',
+        resource: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:61664'}/api/try` as `${string}://${string}`,
+      },
+    });
+
+    if (!paymentHeader) {
+      const response = x402.create402Response(paymentRequirements);
+      return NextResponse.json(response.body, {
+        status: response.status,
+        headers: corsHeaders, // ✅ Include CORS in 402 too
+      });
+    }
+
+    const verified = await x402.verifyPayment(paymentHeader, paymentRequirements);
+    if (!verified) {
+      return NextResponse.json(
+        { error: 'Invalid or unverified payment' },
+        { status: 402, headers: corsHeaders }
+      );
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const result = {
+      message: '✅ Hello, you paid successfully!',
+      receivedData: body,
+    };
+
+    await x402.settlePayment(paymentHeader, paymentRequirements);
+
+    return NextResponse.json(result, { headers: corsHeaders });
+
+  } catch (error: any) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500, headers: corsHeaders }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const paymentHeader = x402.extractPayment(req.headers);
+
+    const paymentRequirements = await x402.createPaymentRequirements({
+      price: {
+        amount: "2500000",
+        asset: {
+          address: "abcmasdmajwindojassmdjoaskmdass",
+          decimals: 6,
+        },
+      },
+      network: 'solana-devnet',
+      config: {
+        description: 'Request Example',
+        resource: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:61664'}/api/try` as `${string}://${string}`,
+      },
+    });
+
+    if (!paymentHeader) {
+      const response = x402.create402Response(paymentRequirements);
+      return NextResponse.json(response.body, {
+        status: response.status,
+        headers: corsHeaders, // ✅ Include CORS in 402 too
+      });
+    }
+
+    const verified = await x402.verifyPayment(paymentHeader, paymentRequirements);
+    if (!verified) {
+      return NextResponse.json(
+        { error: 'Invalid or unverified payment' },
+        { status: 402, headers: corsHeaders }
+      );
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const result = {
+      message: '✅ Hello, you paid successfully!',
+      receivedData: body,
+    };
+
+    await x402.settlePayment(paymentHeader, paymentRequirements);
+
+    return NextResponse.json(result, { headers: corsHeaders });
+
+  } catch (error: any) {
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500, headers: corsHeaders }
+    );
+  }
+}
+
+```
+
+  </Tab>
+
+  
+</Tabs>
 
 
----

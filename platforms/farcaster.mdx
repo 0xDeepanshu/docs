@@ -48,64 +48,61 @@ Integration Kit soon
  ---
 
 
- ## Server
- ```javascript
- export async function POST(req: NextRequest) {
-  try {
-    const paymentHeader = x402.extractPayment(req.headers);
+## Farcaster Miniapp Intergration & Flow
+<Tabs>
+  <Tab title='EVM'>
+## EVM Flow
+This guide explains how to integrate **Unity WebGL games** with **Farcaster Miniapps**.  
+Your setup uses:
 
-    const paymentRequirements = await x402.createPaymentRequirements({
-      price: {
-        amount: "2500000",
-        asset: {
-          address: "Your address",
-          decimals: 6,
-        },
-      },
-      network: 'solana-devnet' || 'base-sepolia'
-      config: {
-        description: 'Response from Gx402',
-        resource: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:61664'}/api/-your-endpoint` as `${string}://${string}`,
-      },
-    });
+  - **Unity (WebGL)** → gameplay & event triggers  
+  - **TypeScript Web Layer** → bridge between Unity and Farcaster  
+  - **gx402** → connects Unity ↔ TypeScript/x402 payments  
+  - **Farcaster Evm Provider** → signs & sends transactions inside Farcaster
 
-    if (!paymentHeader) {
-      const response = x402.create402Response(paymentRequirements);
-      return NextResponse.json(response.body, {
-        status: response.status,
-      });
-    }
 
-    const verified = await x402.verifyPayment(paymentHeader, paymentRequirements);
-    if (!verified) {
-      return NextResponse.json(
-        { error: 'Invalid or unverified payment' },
-        { status: 402, headers: corsHeaders }
-      );
-    }
+## Overview
+  - Rather than manually wiring every payment flow, x402 provides a **payment-middleware + client wrapper** that handles wallet connection, payment prompt, and protected API calls.  
+  - The wallet integration is typically handled by an EVM-wallet library such as wagmi (or OnchainKit) — the miniapp template already includes this. 
+  - The miniapp template auto-detects when it’s running inside Farcaster, and the frame SDK ensures the wallet and environment are set up appropriately. 
+  - You protect routes via payment middleware. If a user calls a protected endpoint without paying, the server returns HTTP 402 (“Payment Required”) with details. Your client then triggers a wallet payment and retries the call with proof.
+  - Using a bridge between `Unity + Typescript + Mini-App` we call x402 from our deployed server and Gx402
 
-    const body = await req.json().catch(() => ({}));
-    const result = {
-      message: '✅ Hello, you paid successfully!',
-      receivedData: body,
-    };
+  </Tab>
+  <Tab title='Solana'>
 
-    await x402.settlePayment(paymentHeader, paymentRequirements);
+## Solana Flow
+This guide explains how to integrate **Unity WebGL games** with **Farcaster Solana Miniapps**.  
+Your setup uses:
 
-    return NextResponse.json(result, { headers: corsHeaders });
+  - **Unity (WebGL)** → gameplay & event triggers  
+  - **TypeScript Web Layer** → bridge between Unity and Farcaster  
+  - **gx402** → connects Unity ↔ TypeScript/x402 payments  
+  - **Farcaster Solana Provider** → signs & sends transactions inside Farcaster
 
-  } catch (error: any) {
-    console.error('API Error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500, headers: corsHeaders }
-    );
-  }
-}
+##   Overview
 
+When the miniapp runs inside Farcaster, your web layer gains access to the **Solana Provider** exposed by the Miniapp SDK.  
+Unity sends requests → TypeScript uses provider → Solana signs/sends transaction → result returns to Unity.
+
+```txt
+┌──────────┐      postMessage      ┌─────────────┐      Solana Wallet      ┌──────────────┐
+│  Unity    │  ─────────────────▶  │ TypeScript  │  ─────────────────────▶  │  Blockchain   │
+└──────────┘                       │   Bridge    │                          └──────────────┘
+      ▲                             └─────────────┘
+      └────────── postMessage back ──────────────────────────────┘
+
+```
+
+  - Rather than prompting the user with a “select wallet” modal each time, the SDK **automatically registers** the Farcaster wallet into the Wallet Standard ecosystem 
+  - When you render the `FarcasterSolanaProvider`, it internally renders the standard `ConnectionProvider` + `WalletProvider` from the Solana Wallet Adapter. That means you don’t have to configure a bunch of providers yourself.
+  - Importing the SDK ensures the Farcaster wallet becomes **pre-selected** in the user’s wallet list (via Wallet Standard). This avoids extra UI friction for mini-apps.  
+  - Adding x402 functionality and using our own Server to call transcations from Farcaster and making it interact using Gx402 with `mini-app + Unity` 
+
+  </Tab>
+</Tabs>
 
 ---
-```
 ## Unity Implementation
   For now we will be using the same approach for build as of Unity Integration section
 
@@ -114,6 +111,7 @@ Integration Kit soon
   </Note>
 
   ---
+```
 
  ## Folder Structure (For Unity WebGL build)
 ```bash
@@ -130,7 +128,8 @@ farcaster-miniapp/
 │   ├── page.tsx
 │   ├── providers.tsx
 │   ├── theme.css
-│   └── unityplayer.tsx
+|   ├── Bridge.ts
+│   └── UnityBuild.tsx
 │
 ├── lib/
 │
